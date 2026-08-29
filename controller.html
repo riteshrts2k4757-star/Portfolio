@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1,
+               maximum-scale=1,
+               user-scalable=no,
+               viewport-fit=cover">
+
+<title>FOOROO Controller</title>
+
+
+<style>
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #000;
+
+    color: white;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    touch-action: none;
+}
+
+
+/* =========================================================
+   MAIN CONTROLLER
+   ========================================================= */
+
+.controller {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100dvh;
+
+    background: #000;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TOP COMMAND DISPLAY
+   ========================================================= */
+
+.top-info {
+
+    position: fixed;
+
+    top: 24px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 100;
+
+    min-width: 180px;
+
+    padding: 12px 28px;
+
+    border-radius: 20px;
+
+    background: rgba(0, 40, 34, 0.55);
+
+    border: 1px solid rgba(0, 255, 190, 0.08);
+
+    box-shadow:
+        0 0 18px rgba(0, 255, 190, 0.04);
+
+    color: #ff6060;
+
+    font-family: monospace;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FULLSCREEN BUTTON
+   ========================================================= */
+
+.fullscreen-btn {
+
+    position: fixed;
+
+    right: 22px;
+
+    bottom: 22px;
+
+    z-index: 300;
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0, 255, 190, 0.15);
+
+    background:
+        radial-gradient(
+            circle,
+            #09201d,
+            #03100e
+        );
+
+    color: white;
+
+    font-size: 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    box-shadow:
+        0 0 15px rgba(0, 255, 190, 0.08);
+}
+
+.fullscreen-btn:active {
+
+    transform: scale(0.94);
+}
+
+
+/* =========================================================
+   SETTINGS BUTTON
+   ========================================================= */
+
+.settings-btn {
+
+    position: fixed;
+
+    left: 22px;
+
+    bottom: 22px;
+
+    z-index: 300;
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0, 255, 190, 0.15);
+
+    background:
+        radial-gradient(
+            circle,
+            #09201d,
+            #03100e
+        );
+
+    color: white;
+
+    font-size: 23px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.action-buttons {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 300;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.action-btn {
+    background: transparent;
+    color: #00ffbe;
+    border: 1px solid rgba(0, 255, 190, 0.3);
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    padding: 5px;
+    touch-action: manipulation;
+    box-shadow: 0 0 10px rgba(0, 255, 190, 0.1);
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* =========================================================
+   JOYSTICK CONTAINER
+   ========================================================= */
+
+.panels {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100dvh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    /*
+     * LARGE SPACE BETWEEN CONTROLLERS
+     * similar to your reference image.
+     */
+
+    padding-left: 9vw;
+
+    padding-right: 9vw;
+
+    padding-top: 25px;
+
+    padding-bottom: 25px;
+
+    touch-action: none;
+}
+
+
+/* =========================================================
+   JOYSTICK
+   ========================================================= */
+
+.joystick-area {
+
+    position: relative;
+
+    /*
+     * Large joystick.
+     */
+
+    width: 320px;
+
+    height: 320px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+
+            #000000 0%,
+
+            #000000 48%,
+
+            rgba(0, 90, 60, 0.20) 62%,
+
+            rgba(0, 160, 105, 0.35) 76%,
+
+            rgba(0, 255, 170, 0.08) 86%,
+
+            #000000 100%
+        );
+
+    border: 2px solid rgba(0, 255, 180, 0.55);
+
+    touch-action: none;
+
+    box-shadow:
+
+        0 0 15px rgba(0, 255, 170, 0.25),
+
+        0 0 35px rgba(0, 255, 170, 0.15),
+
+        inset 0 0 30px rgba(0, 255, 170, 0.12);
+}
+
+
+/* =========================================================
+   INNER JOYSTICK RING
+   ========================================================= */
+
+.joystick-area::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 75%;
+    height: 75%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(
+            0,
+            255,
+            180,
+            0.06
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   JOYSTICK KNOB
+   ========================================================= */
+
+.joystick-knob {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 70px;
+    height: 70px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    color: #050505;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 31px;
+
+    font-weight: bold;
+
+    pointer-events: none;
+
+    box-shadow:
+
+        0 5px 18px rgba(
+            0,
+            0,
+            0,
+            0.8
+        );
+}
+
+
+/* =========================================================
+   CONNECTION PANEL
+   ========================================================= */
+
+.connection-panel {
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 24px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 250;
+
+    width: min(
+        780px,
+        72vw
+    );
+
+    min-height: 70px;
+
+    padding: 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    background:
+        rgba(
+            2,
+            20,
+            17,
+            0.94
+        );
+
+    border:
+        1px solid rgba(
+            0,
+            255,
+            190,
+            0.18
+        );
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 0 20px rgba(
+            0,
+            255,
+            190,
+            0.06
+        );
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   HIDDEN CONNECTION PANEL
+   ========================================================= */
+
+.connection-panel.hidden {
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform:
+        translate(-50%, 25px);
+}
+
+
+/* =========================================================
+   URL INPUT
+   ========================================================= */
+
+#urlInput {
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 50px;
+
+    padding: 0 16px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid #33413e;
+
+    outline: none;
+
+    background: #080b0a;
+
+    color: white;
+
+    font-family: monospace;
+
+    font-size: 15px;
+}
+
+#urlInput:focus {
+
+    border-color:
+        rgba(
+            0,
+            255,
+            180,
+            0.5
+        );
+}
+
+
+/* =========================================================
+   CONNECT BUTTON
+   ========================================================= */
+
+#connectBtn {
+
+    height: 50px;
+
+    padding: 0 28px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #008f55,
+            #00b86b
+        );
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+}
+
+#connectBtn:active {
+
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   STATUS BADGE
+   ========================================================= */
+
+#badge {
+
+    height: 50px;
+
+    min-width: 170px;
+
+    padding: 0 18px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid #26322f;
+
+    background: #080b0a;
+
+    color: #d94444;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+}
+
+#badge.connected {
+
+    color: #00e58a;
+
+    border-color:
+        rgba(
+            0,
+            220,
+            130,
+            0.25
+        );
+}
+
+
+/* =========================================================
+   SERVER TEXT
+   ========================================================= */
+
+.server-text {
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 6px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 200;
+
+    color: #00d88a;
+
+    font-family: monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   LANDSCAPE PHONES
+   ========================================================= */
+
+@media (orientation: landscape) and (max-height: 600px) {
+
+    .panels {
+
+        padding-left: 8vw;
+
+        padding-right: 8vw;
+    }
+
+
+    .joystick-area {
+
+        width: 55vh;
+
+        height: 55vh;
+
+        max-width: 330px;
+
+        max-height: 330px;
+    }
+
+
+    .joystick-knob {
+
+        width: 64px;
+
+        height: 64px;
+
+        font-size: 28px;
+    }
+
+
+    .top-info {
+
+        top: 14px;
+
+        font-size: 16px;
+
+        padding: 8px 20px;
+    }
+
+
+    .connection-panel {
+
+        bottom: 10px;
+
+        min-height: 58px;
+
+        width: min(
+            700px,
+            65vw
+        );
+    }
+
+
+    #urlInput,
+    #connectBtn,
+    #badge {
+
+        height: 42px;
+    }
+
+
+    #urlInput {
+
+        font-size: 12px;
+    }
+
+
+    #connectBtn {
+
+        padding: 0 18px;
+
+        font-size: 12px;
+    }
+
+
+    #badge {
+
+        min-width: 120px;
+
+        font-size: 10px;
+    }
+
+
+    .settings-btn,
+    .fullscreen-btn {
+
+        width: 45px;
+
+        height: 45px;
+
+        bottom: 14px;
+    }
+
+
+    .settings-btn {
+
+        left: 14px;
+    }
+
+
+    .fullscreen-btn {
+
+        right: 14px;
+    }
+
+
+    .server-text {
+
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   NORMAL MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) and (orientation: portrait) {
+
+    /*
+     * Portrait phones:
+     * still keep them separated, but scale down.
+     */
+
+    .panels {
+
+        padding-left: 3vw;
+
+        padding-right: 3vw;
+
+        gap: 4vw;
+    }
+
+
+    .joystick-area {
+
+        width: 44vw;
+
+        height: 44vw;
+
+        min-width: 145px;
+
+        min-height: 145px;
+
+        max-width: 250px;
+
+        max-height: 250px;
+    }
+
+
+    .joystick-knob {
+
+        width: 55px;
+
+        height: 55px;
+
+        font-size: 24px;
+    }
+
+
+    .top-info {
+
+        top: 12px;
+
+        font-size: 14px;
+
+        min-width: 120px;
+
+        padding: 8px 15px;
+    }
+
+
+    .connection-panel {
+
+        width: 95vw;
+
+        bottom: 8px;
+
+        min-height: 58px;
+
+        border-radius: 12px;
+    }
+
+
+    #urlInput {
+
+        height: 40px;
+
+        font-size: 10px;
+
+        padding: 0 8px;
+    }
+
+
+    #connectBtn {
+
+        height: 40px;
+
+        padding: 0 10px;
+
+        font-size: 10px;
+    }
+
+
+    #badge {
+
+        height: 40px;
+
+        min-width: 75px;
+
+        padding: 0 5px;
+
+        font-size: 8px;
+    }
+
+
+    .settings-btn,
+    .fullscreen-btn {
+
+        width: 42px;
+
+        height: 42px;
+
+        bottom: 12px;
+    }
+
+
+    .settings-btn {
+
+        left: 12px;
+    }
+
+
+    .fullscreen-btn {
+
+        right: 12px;
+    }
+
+
+    .server-text {
+
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .panels {
+
+        padding-left: 2vw;
+
+        padding-right: 2vw;
+
+        gap: 3vw;
+    }
+
+
+    .joystick-area {
+
+        width: 45vw;
+
+        height: 45vw;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="controller">
+
+
+    <!-- =================================================
+         COMMAND DISPLAY
+         ================================================= -->
+
+    <div
+        class="top-info"
+        id="cmdText">
+
+        STOP
+
+    </div>
+
+
+
+    <!-- =================================================
+         ACTION BUTTONS
+         ================================================= -->
+
+    <div class="action-buttons">
+        <button class="action-btn" onclick="sendAction('ACTION_START_MISSION')">Start Mission</button>
+        <button class="action-btn" onclick="sendAction('ACTION_OPTIMAL_PATH')">Optimal Path</button>
+        <button class="action-btn" onclick="sendAction('ACTION_RESET')">Reset</button>
+        <button class="action-btn" onclick="sendAction('ACTION_FULLSCREEN')">Full Screen</button>
+    </div>
+
+
+    <!-- =================================================
+         LEFT JOYSTICK
+         FORWARD / BACKWARD
+         ================================================= -->
+
+    <div class="panels">
+
+        <div
+            class="joystick-area"
+            id="joystickL">
+
+            <div
+                class="joystick-knob"
+                id="knobL">
+
+                ↕
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT JOYSTICK
+             LEFT / RIGHT
+             ================================================= -->
+
+        <div
+            class="joystick-area"
+            id="joystickR">
+
+            <div
+                class="joystick-knob"
+                id="knobR">
+
+                ↔
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         SETTINGS
+         ================================================= -->
+
+    <button
+        class="settings-btn"
+        onclick="toggleConnectionPanel()">
+
+        ⚙
+
+    </button>
+
+
+
+    <!-- =================================================
+         FULLSCREEN
+         ================================================= -->
+
+    <button
+        class="fullscreen-btn"
+        onclick="toggleFullscreen()">
+
+        ⛶
+
+    </button>
+
+
+
+    <!-- =================================================
+         CONNECTION PANEL
+         ================================================= -->
+
+    <div
+        class="connection-panel"
+        id="connectionPanel">
+
+
+        <input
+            id="urlInput"
+            type="text"
+            value=""
+            autocomplete="off"
+            spellcheck="false"
+        >
+        <script>
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            document.getElementById('urlInput').value = `${wsProtocol}//${window.location.host}/api/game-ws`;
+        </script>
+
+
+        <button
+            id="connectBtn"
+            onclick="connectWS()">
+
+            CONNECT
+
+        </button>
+
+
+        <div
+            id="badge">
+
+            DISCONNECTED
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         SERVER STATUS TEXT
+         ================================================= -->
+
+    <div
+        class="server-text"
+        id="serverText">
+
+        DISCONNECTED
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================================
+   WEBSOCKET VARIABLES
+   ========================================================= */
+
+let ws = null;
+
+let lastCmd = "";
+
+
+
+/* =========================================================
+   JOYSTICK VALUES
+   ========================================================= */
+
+/*
+ *
+ * forwardValue
+ *
+ *  99  = full forward
+ *   0  = center
+ * -99  = full backward
+ *
+ *
+ * turnValue
+ *
+ *  99  = full right
+ *   0  = center
+ * -99  = full left
+ *
+ */
+
+let forwardValue = 0;
+
+let turnValue = 0;
+
+
+
+/* =========================================================
+   CONNECT WEBSOCKET
+   ========================================================= */
+
+function connectWS() {
+
+    const url =
+        document
+            .getElementById("urlInput")
+            .value
+            .trim();
+
+
+    if (!url) {
+
+        return;
+    }
+
+
+    /* -----------------------------------------------
+       Close previous connection
+       ----------------------------------------------- */
+
+    if (ws) {
+
+        try {
+
+            ws.close();
+
+        } catch (error) {}
+
+    }
+
+
+    setBadge(
+        "CONNECTING",
+        false
+    );
+
+
+    try {
+
+        ws =
+            new WebSocket(url);
+
+    } catch (error) {
+
+        console.log(
+            "WebSocket creation error:",
+            error
+        );
+
+        setBadge(
+            "ERROR",
+            false
+        );
+
+        return;
+    }
+
+
+
+    /* =================================================
+       CONNECTED
+       ================================================= */
+
+    ws.onopen = function() {
+
+        console.log(
+            "WebSocket connected"
+        );
+
+
+        /*
+         * Register phone with server.
+         */
+
+        ws.send(
+            "REGISTER_PHONE"
+        );
+
+
+        setBadge(
+            "CONNECTED",
+            true
+        );
+
+
+        document
+            .getElementById(
+                "serverText"
+            )
+            .textContent =
+            "CONNECTED TO SERVER";
+
+
+        /*
+         * Allow STOP to be sent again.
+         */
+
+        lastCmd = "";
+
+
+        sendCommand();
+
+
+        /*
+         * Hide connection panel.
+         */
+
+        setTimeout(
+            function() {
+
+                document
+                    .getElementById(
+                        "connectionPanel"
+                    )
+                    .classList
+                    .add("hidden");
+
+            },
+            500
+        );
+    };
+
+
+
+    /* =================================================
+       SERVER MESSAGE
+       ================================================= */
+
+    ws.onmessage = function(event) {
+
+        console.log(
+            "SERVER:",
+            event.data
+        );
+    };
+
+
+
+    /* =================================================
+       CLOSED
+       ================================================= */
+
+    ws.onclose = function() {
+
+        console.log(
+            "WebSocket disconnected"
+        );
+
+
+        setBadge(
+            "DISCONNECTED",
+            false
+        );
+
+
+        document
+            .getElementById(
+                "serverText"
+            )
+            .textContent =
+            "DISCONNECTED";
+    };
+
+
+
+    /* =================================================
+       ERROR
+       ================================================= */
+
+    ws.onerror = function(error) {
+
+        console.log(
+            "WebSocket ERROR:",
+            error
+        );
+
+
+        setBadge(
+            "ERROR",
+            false
+        );
+
+
+        document
+            .getElementById(
+                "serverText"
+            )
+            .textContent =
+            "CONNECTION ERROR";
+    };
+}
+
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
+function setBadge(
+    text,
+    connected
+) {
+
+    const badge =
+        document.getElementById(
+            "badge"
+        );
+
+
+    badge.textContent =
+        text;
+
+
+    badge.className =
+        connected
+            ? "connected"
+            : "";
+}
+
+
+
+/* =========================================================
+   GENERATE COMBINED COMMAND
+   ========================================================= */
+
+function getCommand() {
+
+    let command = "";
+
+
+
+    /* =================================================
+       FORWARD / BACKWARD
+       ================================================= */
+
+    if (
+        Math.abs(forwardValue) >= 5
+    ) {
+
+        const value =
+            Math.min(
+                99,
+                Math.abs(
+                    Math.round(
+                        forwardValue
+                    )
+                )
+            );
+
+
+        const valueString =
+            value
+                .toString()
+                .padStart(2, "0");
+
+
+        /*
+         * Positive = Forward
+         */
+
+        if (
+            forwardValue > 0
+        ) {
+
+            command +=
+                "F" + valueString;
+
+        } else {
+
+            command +=
+                "B" + valueString;
+        }
+    }
+
+
+
+    /* =================================================
+       LEFT / RIGHT
+       ================================================= */
+
+    if (
+        Math.abs(turnValue) >= 5
+    ) {
+
+        const value =
+            Math.min(
+                99,
+                Math.abs(
+                    Math.round(
+                        turnValue
+                    )
+                )
+            );
+
+
+        const valueString =
+            value
+                .toString()
+                .padStart(2, "0");
+
+
+        /*
+         * Negative = Left
+         */
+
+        if (
+            turnValue < 0
+        ) {
+
+            command +=
+                "L" + valueString;
+
+        } else {
+
+            command +=
+                "R" + valueString;
+        }
+    }
+
+
+
+    /* =================================================
+       STOP
+       ================================================= */
+
+    if (
+        command === ""
+    ) {
+
+        command =
+            "STOP";
+    }
+
+
+    return command;
+}
+
+
+
+/* =========================================================
+   SEND COMMAND
+   ========================================================= */
+
+function sendCommand() {
+
+    const command =
+        getCommand();
+
+
+    /*
+     * Don't send duplicates.
+     */
+
+    if (
+        command === lastCmd
+    ) {
+
+        return;
+    }
+
+
+    lastCmd =
+        command;
+
+
+    /*
+     * Display command.
+     */
+
+    document
+        .getElementById(
+            "cmdText"
+        )
+        .textContent =
+        command;
+
+
+    /*
+     * Send through WebSocket.
+     */
+
+    if (
+        ws &&
+        ws.readyState ===
+            WebSocket.OPEN
+    ) {
+
+        ws.send(
+            command
+        );
+    }
+
+
+    /*
+     * Debug console.
+     */
+
+    console.log(
+        "SEND:",
+        command
+    );
+}
+
+
+
+/* =========================================================
+   SEND SPECIFIC ACTION (BUTTONS)
+   ========================================================= */
+
+function sendAction(action) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(action);
+        console.log("SEND ACTION:", action);
+    }
+}
+
+
+/* =========================================================
+   JOYSTICK SETUP
+   ========================================================= */
+
+function setupJoystick(
+    areaId,
+    knobId,
+    axis
+) {
+
+    const area =
+        document.getElementById(
+            areaId
+        );
+
+
+    const knob =
+        document.getElementById(
+            knobId
+        );
+
+
+    /*
+     * IMPORTANT:
+     *
+     * Each joystick stores its own
+     * pointer/finger ID.
+     *
+     * This allows:
+     *
+     * LEFT FINGER + RIGHT FINGER
+     *
+     * simultaneously.
+     */
+
+    let active = false;
+
+    let pointerId = null;
+
+
+
+    /* =================================================
+       JOYSTICK RADIUS
+       ================================================= */
+
+    function getRadius() {
+
+        return (
+            area.clientWidth / 2
+            -
+            knob.clientWidth / 2
+            -
+            8
+        );
+    }
+
+
+
+    /* =================================================
+       POINTER DOWN
+       ================================================= */
+
+    function onStart(event) {
+
+        event.preventDefault();
+
+
+        if (active) {
+
+            return;
+        }
+
+
+        active = true;
+
+
+        pointerId =
+            event.pointerId;
+
+
+        /*
+         * Capture THIS finger.
+         */
+
+        try {
+
+            area.setPointerCapture(
+                pointerId
+            );
+
+        } catch (error) {}
+
+
+        updateJoystick(
+            event
+        );
+    }
+
+
+
+    /* =================================================
+       POINTER MOVE
+       ================================================= */
+
+    function onMove(event) {
+
+        if (!active) {
+
+            return;
+        }
+
+
+        /*
+         * Ignore other fingers.
+         */
+
+        if (
+            event.pointerId !==
+            pointerId
+        ) {
+
+            return;
+        }
+
+
+        event.preventDefault();
+
+
+        updateJoystick(
+            event
+        );
+    }
+
+
+
+    /* =================================================
+       UPDATE JOYSTICK
+       ================================================= */
+
+    function updateJoystick(event) {
+
+        const rect =
+            area.getBoundingClientRect();
+
+
+        const centerX =
+            rect.left +
+            rect.width / 2;
+
+
+        const centerY =
+            rect.top +
+            rect.height / 2;
+
+
+        let dx =
+            event.clientX -
+            centerX;
+
+
+        let dy =
+            event.clientY -
+            centerY;
+
+
+        const radius =
+            getRadius();
+
+
+
+        /* =================================================
+           LEFT JOYSTICK
+           ================================================= */
+
+        if (
+            axis === "Y"
+        ) {
+
+            /*
+             * Lock X.
+             */
+
+            dx = 0;
+
+
+            /*
+             * Limit Y.
+             */
+
+            if (
+                dy > radius
+            ) {
+
+                dy = radius;
+            }
+
+
+            if (
+                dy < -radius
+            ) {
+
+                dy = -radius;
+            }
+
+
+            /*
+             * Screen UP:
+             * Forward
+             *
+             * Screen DOWN:
+             * Backward
+             */
+
+            forwardValue =
+                -(dy / radius) * 99;
+        }
+
+
+
+        /* =================================================
+           RIGHT JOYSTICK
+           ================================================= */
+
+        if (
+            axis === "X"
+        ) {
+
+            /*
+             * Lock Y.
+             */
+
+            dy = 0;
+
+
+            /*
+             * Limit X.
+             */
+
+            if (
+                dx > radius
+            ) {
+
+                dx = radius;
+            }
+
+
+            if (
+                dx < -radius
+            ) {
+
+                dx = -radius;
+            }
+
+
+            /*
+             * Screen LEFT:
+             * Left
+             *
+             * Screen RIGHT:
+             * Right
+             */
+
+            turnValue =
+                (dx / radius) * 99;
+        }
+
+
+
+        /* =================================================
+           MOVE KNOB
+           ================================================= */
+
+        knob.style.transform =
+            `translate(
+                calc(-50% + ${dx}px),
+                calc(-50% + ${dy}px)
+            )`;
+
+
+
+        /* =================================================
+           SEND COMBINED COMMAND
+           ================================================= */
+
+        sendCommand();
+    }
+
+
+
+    /* =================================================
+       POINTER UP
+       ================================================= */
+
+    function onEnd(event) {
+
+        if (!active) {
+
+            return;
+        }
+
+
+        if (
+            event.pointerId !==
+            pointerId
+        ) {
+
+            return;
+        }
+
+
+        active = false;
+
+        pointerId = null;
+
+
+        /*
+         * Reset knob.
+         */
+
+        knob.style.transform =
+            "translate(-50%, -50%)";
+
+
+        /*
+         * Reset ONLY this joystick.
+         */
+
+        if (
+            axis === "Y"
+        ) {
+
+            forwardValue = 0;
+
+        } else {
+
+            turnValue = 0;
+        }
+
+
+        /*
+         * If the other joystick is still
+         * being held, it remains active.
+         *
+         * Example:
+         *
+         * F34L23
+         *
+         * release left joystick
+         *
+         * R23
+         *
+         * release right joystick
+         *
+         * STOP
+         */
+
+        sendCommand();
+    }
+
+
+
+    /* =================================================
+       POINTER CANCEL
+       ================================================= */
+
+    function onCancel(event) {
+
+        onEnd(event);
+    }
+
+
+
+    /* =================================================
+       EVENT LISTENERS
+       ================================================= */
+
+    area.addEventListener(
+        "pointerdown",
+        onStart
+    );
+
+
+    area.addEventListener(
+        "pointermove",
+        onMove
+    );
+
+
+    area.addEventListener(
+        "pointerup",
+        onEnd
+    );
+
+
+    area.addEventListener(
+        "pointercancel",
+        onCancel
+    );
+}
+
+
+
+/* =========================================================
+   INITIALIZE LEFT JOYSTICK
+   ========================================================= */
+
+setupJoystick(
+    "joystickL",
+    "knobL",
+    "Y"
+);
+
+
+
+/* =========================================================
+   INITIALIZE RIGHT JOYSTICK
+   ========================================================= */
+
+setupJoystick(
+    "joystickR",
+    "knobR",
+    "X"
+);
+
+
+
+/* =========================================================
+   FULLSCREEN
+   ========================================================= */
+
+async function toggleFullscreen() {
+
+    try {
+
+        if (
+            !document.fullscreenElement
+        ) {
+
+            await document
+                .documentElement
+                .requestFullscreen();
+
+        } else {
+
+            await document
+                .exitFullscreen();
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Fullscreen error:",
+            error
+        );
+    }
+}
+
+
+
+/* =========================================================
+   CONNECTION PANEL
+   ========================================================= */
+
+function toggleConnectionPanel() {
+
+    const panel =
+        document.getElementById(
+            "connectionPanel"
+        );
+
+
+    panel.classList.toggle(
+        "hidden"
+    );
+}
+
+
+
+/* =========================================================
+   KEYBOARD TEST CONTROLS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        /*
+         * These are only for testing
+         * from your computer.
+         */
+
+        if (
+            event.key === "ArrowUp"
+        ) {
+
+            forwardValue = 50;
+
+        }
+
+        else if (
+            event.key === "ArrowDown"
+        ) {
+
+            forwardValue = -50;
+
+        }
+
+        else if (
+            event.key === "ArrowLeft"
+        ) {
+
+            turnValue = -50;
+
+        }
+
+        else if (
+            event.key === "ArrowRight"
+        ) {
+
+            turnValue = 50;
+
+        }
+
+        else {
+
+            return;
+        }
+
+
+        sendCommand();
+    }
+);
+
+
+
+document.addEventListener(
+    "keyup",
+    function(event) {
+
+        if (
+            event.key === "ArrowUp" ||
+            event.key === "ArrowDown"
+        ) {
+
+            forwardValue = 0;
+        }
+
+
+        if (
+            event.key === "ArrowLeft" ||
+            event.key === "ArrowRight"
+        ) {
+
+            turnValue = 0;
+        }
+
+
+        sendCommand();
+    }
+);
+
+</script>
+
+</body>
+
+</html>

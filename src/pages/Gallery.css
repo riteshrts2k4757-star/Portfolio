@@ -1,0 +1,299 @@
+/* src/pages/Gallery.css */
+
+.gallery-page {
+  max-width: 1600px;
+  width: 95%;
+  margin: 0 auto;
+  padding: 2rem 0;
+  animation: fadeIn 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.gallery-header {
+  text-align: center;
+}
+
+.gallery-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.5rem 0;
+}
+
+.gallery-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Map Section */
+.gallery-map-container {
+  height: 500px;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden; /* Ensures map tiles don't break border radius */
+  padding: 0; /* Remove padding from glass-box for the map */
+  position: relative;
+  z-index: 1; /* Keep leaflet z-index contained */
+  border: 1px solid var(--glass-border);
+}
+
+.leaflet-map {
+  height: 100%;
+  width: 100%;
+  border-radius: 20px;
+}
+
+/* Custom Popup Styling */
+.gallery-popup .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  font-family: inherit;
+}
+
+.gallery-popup .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.gallery-popup strong {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.gallery-popup .text-muted {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.popup-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 6px 12px;
+  background: var(--accent-1);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.popup-btn:hover {
+  background: var(--accent-2);
+  transform: translateY(-1px);
+}
+
+/* Dynamic Media Panel */
+.gallery-media-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.media-content-wrapper {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.media-content-wrapper.loading {
+  opacity: 0.4;
+  transform: scale(0.98);
+}
+
+/* Info Section */
+.media-info {
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.media-title-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.media-title-group h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.media-title-group .badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--accent-2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.media-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 900px;
+}
+
+/* Media Grid */
+.media-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.media-box {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.media-box-header {
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.8rem;
+}
+
+.media-box-header h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  color: var(--text-main);
+}
+
+.media-asset {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.media-asset img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.media-asset img:hover {
+  transform: scale(1.03);
+}
+
+.media-asset video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .gallery-map-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .gallery-header h1 {
+    font-size: 2rem;
+  }
+  
+  .gallery-map-container {
+    height: 350px;
+  }
+  
+  .media-title-group h2 {
+    font-size: 1.6rem;
+  }
+  
+  .media-asset {
+    min-height: 220px;
+  }
+}
+
+/* Carousel Styles */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+.carousel-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.prev-btn {
+  left: 10px;
+}
+
+.next-btn {
+  right: 10px;
+}
+
+.carousel-indicator {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 10;
+}
