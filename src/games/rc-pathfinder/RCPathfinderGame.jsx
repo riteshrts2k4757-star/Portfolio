@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { API_BASE_URL } from '../../apiConfig';
+import { API_BASE_URL, WS_BASE_URL } from '../../apiConfig';
 import { Engine } from './Engine.js';
 import { Physics } from './Physics.js';
 import { MapGenerator } from './MapGenerator.js';
@@ -265,8 +265,7 @@ const RCPathfinderGame = () => {
     const phoneInput = { throttle: 0, steering: 0 };
     
     const connectWs = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      ws = new WebSocket(`${protocol}//${window.location.host}/api/game-ws`);
+      ws = new WebSocket(`${WS_BASE_URL}/api/game-ws`);
       
       ws.onopen = () => {
         console.log('[Game] Connected to local WebSocket server');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Search, Send, Bot, ArrowLeft, Check, CheckCheck } from 'lucide-react';
+import { API_BASE_URL, WS_BASE_URL } from '../apiConfig';
 import './Chat.css';
 
 const Chat = () => {
@@ -30,9 +31,8 @@ const Chat = () => {
   // Fetch initial members
   const fetchMembers = async () => {
     try {
-      const apiBase = `http://${window.location.hostname}:5000`;
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBase}/api/chat/users`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/users`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
@@ -47,9 +47,8 @@ const Chat = () => {
   // Fetch conversation when user is selected
   const fetchConversation = async (userId) => {
     try {
-      const apiBase = `http://${window.location.hostname}:5000`;
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBase}/api/chat/messages/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/messages/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
@@ -58,7 +57,7 @@ const Chat = () => {
       }
       
       // Mark as read
-      await fetch(`${apiBase}/api/chat/messages/${userId}/read`, {
+      await fetch(`${API_BASE_URL}/api/chat/messages/${userId}/read`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -78,9 +77,7 @@ const Chat = () => {
     fetchMembers();
 
     const token = localStorage.getItem('token');
-    // Determine WS URL based on current host
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${wsProtocol}//${window.location.hostname}:5000/api/chat-ws`;
+    const wsUrl = `${WS_BASE_URL}/api/chat-ws`;
     
     ws.current = new WebSocket(wsUrl);
 
