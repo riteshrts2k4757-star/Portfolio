@@ -261,9 +261,67 @@ const RCPathfinderGame = () => {
 
     // ── WebSocket setup ──────────────────────────────────
     let ws = null;
+    let peerConnection = null;
+    let dataChannel = null;
+
     let phoneTimeout = null;
     const phoneInput = { throttle: 0, steering: 0 };
     
+    const parseInputData = (data) => {
+      if (data === 'STOP') {
+        phoneInput.throttle = 0;
+        phoneInput.steering = 0;
+      } else if (typeof data === 'string') {
+        let throttle = 0;
+        let steering = 0;
+        
+        // Parse F/B
+        const m = data.match(/([FB])(\d+)/);
+        if (m) {
+          let val = parseInt(m[2], 10);
+          if (val === 99) val = 100;
+          throttle = (val / 100) * (m[1] === 'F' ? 1 : -1);
+        }
+        
+        // Parse L/R
+        const m2 = data.match(/([LR])(\d+)/);
+        if (m2) {
+          let val = parseInt(m2[2], 10);
+          if (val === 99) val = 100;
+          steering = (val / 100) * (m2[1] === 'R' ? 1 : -1);
+        }
+        
+        phoneInput.throttle = Math.max(-1, Math.min(1, throttle));
+        phoneInput.steering = Math.max(-1, Math.min(1, steering));
+      }
+    };
+
+    const setupWebRTC = async () => {
+      peerConnection = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+      });
+
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'webrtc', subtype: 'ice', candidate: event.candidate }));
+        }
+      };
+
+      dataChannel = peerConnection.createDataChannel('gameControls');
+      dataChannel.onopen = () => console.log('[Game] WebRTC DataChannel opened!');
+      dataChannel.onclose = () => console.log('[Game] WebRTC DataChannel closed.');
+      dataChannel.onmessage = (event) => {
+        parseInputData(event.data);
+      };
+
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'webrtc', subtype: 'offer', sdp: offer }));
+      }
+    };
+
     const connectWs = () => {
       ws = new WebSocket(`${WS_BASE_URL}/api/game-ws`);
       
@@ -272,9 +330,21 @@ const RCPathfinderGame = () => {
         ws.send('REGISTER_GAME');
       };
       
-      ws.onmessage = (event) => {
+      ws.onmessage = async (event) => {
         try {
           const data = event.data;
+
+          if (data.startsWith('{')) {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'webrtc' && peerConnection) {
+              if (parsed.subtype === 'answer') {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(parsed.sdp));
+              } else if (parsed.subtype === 'ice' && parsed.candidate) {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(parsed.candidate));
+              }
+            }
+            return;
+          }
           
           if (data === 'GAME_OK') {
             console.log('[Game] Registered with server');
@@ -283,11 +353,16 @@ const RCPathfinderGame = () => {
           if (data === 'PHONE_CONNECTED') {
             console.log('[Game] Phone connected');
             setUi(prev => ({ ...prev, phoneConnected: true }));
+            setupWebRTC();
             return;
           }
           if (data === 'PHONE_DISCONNECTED') {
             console.log('[Game] Phone disconnected');
             setUi(prev => ({ ...prev, phoneConnected: false }));
+            if (peerConnection) {
+              peerConnection.close();
+              peerConnection = null;
+            }
             return;
           }
 
@@ -308,34 +383,9 @@ const RCPathfinderGame = () => {
             return;
           }
 
-          if (data === 'STOP') {
-            phoneInput.throttle = 0;
-            phoneInput.steering = 0;
-          } else if (typeof data === 'string') {
-            let throttle = 0;
-            let steering = 0;
-            
-            // Parse F/B
-            const m = data.match(/([FB])(\d+)/);
-            if (m) {
-              let val = parseInt(m[2], 10);
-              if (val === 99) val = 100;
-              throttle = (val / 100) * (m[1] === 'F' ? 1 : -1);
-            }
-            
-            // Parse L/R
-            const m2 = data.match(/([LR])(\d+)/);
-            if (m2) {
-              let val = parseInt(m2[2], 10);
-              if (val === 99) val = 100;
-              steering = (val / 100) * (m2[1] === 'R' ? 1 : -1);
-            }
-            
-            phoneInput.throttle = Math.max(-1, Math.min(1, throttle));
-            phoneInput.steering = Math.max(-1, Math.min(1, steering));
-          }
+          // Fallback parsing for WS messages (if WebRTC not connected)
+          parseInputData(data);
 
-          // Watchdog removed: rely on explicit STOP or 0 commands from the phone
         } catch (e) {
           console.error('[Game] Error parsing message:', e);
         }

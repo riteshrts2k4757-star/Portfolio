@@ -1106,10 +1106,12 @@ body {
 
 
 /* =========================================================
-   WEBSOCKET VARIABLES
+   WEBSOCKET & WEBRTC VARIABLES
    ========================================================= */
 
 let ws = null;
+let peerConnection = null;
+let dataChannel = null;
 
 let lastCmd = "";
 
@@ -1270,15 +1272,61 @@ function connectWS() {
 
 
     /* =================================================
-       SERVER MESSAGE
+       SERVER MESSAGE (SIGNALING)
        ================================================= */
 
-    ws.onmessage = function(event) {
+    ws.onmessage = async function(event) {
+        if (event.data.startsWith('{')) {
+            try {
+                const parsed = JSON.parse(event.data);
+                if (parsed.type === 'webrtc') {
+                    if (parsed.subtype === 'offer') {
+                        // Create Peer Connection
+                        peerConnection = new RTCPeerConnection({
+                            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+                        });
 
-        console.log(
-            "SERVER:",
-            event.data
-        );
+                        peerConnection.onicecandidate = (e) => {
+                            if (e.candidate && ws && ws.readyState === WebSocket.OPEN) {
+                                ws.send(JSON.stringify({ type: 'webrtc', subtype: 'ice', candidate: e.candidate }));
+                            }
+                        };
+
+                        peerConnection.ondatachannel = (e) => {
+                            dataChannel = e.channel;
+                            dataChannel.onopen = () => {
+                                console.log("WebRTC DataChannel OPENED");
+                                document.getElementById("serverText").textContent = "WEBRTC CONNECTED (0 LAG)";
+                                document.getElementById("serverText").style.color = "#a78bfa";
+                                setBadge("WEBRTC", true);
+                                document.getElementById("badge").style.background = "#8b5cf6";
+                            };
+                            dataChannel.onclose = () => {
+                                console.log("WebRTC DataChannel CLOSED");
+                                dataChannel = null;
+                                document.getElementById("serverText").textContent = "CONNECTED TO SERVER (FALLBACK)";
+                                document.getElementById("serverText").style.color = "";
+                                setBadge("CONNECTED", true);
+                                document.getElementById("badge").style.background = "";
+                            };
+                        };
+
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(parsed.sdp));
+                        const answer = await peerConnection.createAnswer();
+                        await peerConnection.setLocalDescription(answer);
+                        
+                        ws.send(JSON.stringify({ type: 'webrtc', subtype: 'answer', sdp: answer }));
+                        
+                    } else if (parsed.subtype === 'ice' && parsed.candidate && peerConnection) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(parsed.candidate));
+                    }
+                }
+            } catch(e) {
+                console.error("Signaling error:", e);
+            }
+        } else {
+            console.log("SERVER:", event.data);
+        }
     };
 
 
@@ -1306,6 +1354,14 @@ function connectWS() {
             )
             .textContent =
             "DISCONNECTED";
+            
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+        dataChannel = null;
+        document.getElementById("badge").style.background = "";
+        document.getElementById("serverText").style.color = "";
     };
 
 
@@ -1516,7 +1572,9 @@ function sendCommand() {
         lastCmd = command;
         document.getElementById("cmdText").textContent = command;
         
-        if (ws && ws.readyState === WebSocket.OPEN) {
+        if (dataChannel && dataChannel.readyState === 'open') {
+            dataChannel.send(command);
+        } else if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(command);
         }
         
@@ -1533,7 +1591,9 @@ function sendCommand() {
         lastCmd = command;
         document.getElementById("cmdText").textContent = command;
 
-        if (ws && ws.readyState === WebSocket.OPEN) {
+        if (dataChannel && dataChannel.readyState === 'open') {
+            dataChannel.send(command);
+        } else if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(command);
         }
 
@@ -1542,7 +1602,9 @@ function sendCommand() {
             if (pendingCommand && pendingCommand !== lastCmd) {
                 lastCmd = pendingCommand;
                 document.getElementById("cmdText").textContent = lastCmd;
-                if (ws && ws.readyState === WebSocket.OPEN) {
+                if (dataChannel && dataChannel.readyState === 'open') {
+                    dataChannel.send(lastCmd);
+                } else if (ws && ws.readyState === WebSocket.OPEN) {
                     ws.send(lastCmd);
                 }
                 pendingCommand = null;

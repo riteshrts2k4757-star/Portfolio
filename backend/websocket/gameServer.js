@@ -42,6 +42,23 @@ export function setupGameServer(server) {
         // Intentionally not logging phone input to keep terminal clean
       }
 
+      // Handle WebRTC Signaling
+      if (text.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(text);
+          if (parsed.type === 'webrtc') {
+            if (ws === gameClient && phoneClient && phoneClient.readyState === 1) {
+              phoneClient.send(text);
+            } else if (ws === phoneClient && gameClient && gameClient.readyState === 1) {
+              gameClient.send(text);
+            }
+            return; // don't forward twice
+          }
+        } catch (e) {
+          // ignore parse errors, might be normal string command
+        }
+      }
+
       if (gameClient && gameClient.readyState === 1) {
         gameClient.send(text);
       } else {
