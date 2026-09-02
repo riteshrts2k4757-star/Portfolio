@@ -1488,6 +1488,9 @@ function getCommand() {
    SEND COMMAND
    ========================================================= */
 
+let throttleTimer = null;
+let pendingCommand = null;
+
 function sendCommand() {
 
     const command =
@@ -1506,46 +1509,50 @@ function sendCommand() {
     }
 
 
-    lastCmd =
-        command;
-
-
-    /*
-     * Display command.
-     */
-
-    document
-        .getElementById(
-            "cmdText"
-        )
-        .textContent =
-        command;
-
-
-    /*
-     * Send through WebSocket.
-     */
-
     if (
-        ws &&
-        ws.readyState ===
-            WebSocket.OPEN
+        command === "STOP"
     ) {
 
-        ws.send(
-            command
-        );
+        lastCmd = command;
+        document.getElementById("cmdText").textContent = command;
+        
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(command);
+        }
+        
+        if (throttleTimer) {
+            clearTimeout(throttleTimer);
+            throttleTimer = null;
+        }
+        pendingCommand = null;
+        return;
     }
 
+    if (!throttleTimer) {
 
-    /*
-     * Debug console.
-     */
+        lastCmd = command;
+        document.getElementById("cmdText").textContent = command;
 
-    console.log(
-        "SEND:",
-        command
-    );
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(command);
+        }
+
+        throttleTimer = setTimeout(() => {
+            throttleTimer = null;
+            if (pendingCommand && pendingCommand !== lastCmd) {
+                lastCmd = pendingCommand;
+                document.getElementById("cmdText").textContent = lastCmd;
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(lastCmd);
+                }
+                pendingCommand = null;
+            }
+        }, 40);
+
+    } else {
+
+        pendingCommand = command;
+    }
 }
 
 
