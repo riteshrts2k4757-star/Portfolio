@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { User, Camera, X, Edit2, Save, LogOut, Shield, Mail, KeyRound, Trophy, Target, Timer, Zap, Award, Clock, Gamepad2 } from 'lucide-react';
 import AvatarEditor from 'react-avatar-editor';
+import { API_BASE_URL } from '../apiConfig';
 
 const Account = () => {
   const { user, logout, loading, fetchUser } = useContext(AuthContext);
@@ -46,7 +47,7 @@ const Account = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const res = await fetch('http://localhost:5000/api/auth/game-stats', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/game-stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -98,7 +99,7 @@ const Account = () => {
       setError('');
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/auth/profile-picture', {
+        const response = await fetch(`${API_BASE_URL}/api/auth/profile-picture`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ image: base64String })
@@ -146,7 +147,7 @@ const Account = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(formData)

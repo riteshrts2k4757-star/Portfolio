@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { API_BASE_URL } from '../../apiConfig';
 import { Engine } from './Engine.js';
 import { Physics } from './Physics.js';
 import { MapGenerator } from './MapGenerator.js';
@@ -620,7 +621,7 @@ const RCPathfinderGame = () => {
         // Save game stats to backend if user is logged in
         const token = localStorage.getItem('token');
         if (token) {
-          fetch('http://localhost:5000/api/auth/game-stats', {
+          fetch(`${API_BASE_URL}/api/auth/game-stats`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({

@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Mail, Lock } from 'lucide-react';
+import { API_BASE_URL } from '../apiConfig';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -24,7 +25,7 @@ const Login = () => {
       const endpoint = forgotPasswordMode ? '/api/auth/forgot-password' : '/api/auth/login';
       const payload = forgotPasswordMode ? { email: formData.email } : formData;
 
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
