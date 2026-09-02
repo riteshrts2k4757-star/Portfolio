@@ -145,7 +145,7 @@ const CompletionOverlay = ({ data, onNewMap, onPlayAgain, user }) => {
 const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
   const [showQr, setShowQr] = useState(false);
   // URL to control the car
-  const controllerUrl = `${window.location.protocol}//${window.location.host}/controller`;
+  const controllerUrl = `${API_BASE_URL}/controller`;
 
   return (
     <div style={S.overlay}>
