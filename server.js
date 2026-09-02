@@ -7,7 +7,6 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import pool from './db.js';
 import authRoutes from './backend/routes/authRoutes.js';
 import chatRoutes from './backend/routes/chatRoutes.js';
 import { createUsersTable, createGameStatsTable } from './backend/models/userModel.js';
@@ -41,22 +40,13 @@ app.use('/api', apiLimiter);
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 
-// Ensure the tables exist in PostgreSQL
+// Ensure the tables exist (no-ops when using Supabase — tables managed via SQL Editor)
 const initDb = async () => {
   await createUsersTable();
   await createGameStatsTable();
   await createMessagesTable();
 };
 initDb();
-
-// Test DB Connection
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('❌ Error connecting to PostgreSQL:', err);
-  } else {
-    console.log('📦 PostgreSQL connected successfully. Current time:', res.rows[0].now);
-  }
-});
 
 // API Routes
 app.use('/api/auth', authRoutes);
