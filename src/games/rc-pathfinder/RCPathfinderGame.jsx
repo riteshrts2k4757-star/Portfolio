@@ -56,7 +56,7 @@ const HUD = ({ ui, user }) => (
         ● {ui.status}
       </div>
     </div>
-    
+
     {/* Right: user badge */}
     {user && (
       <div style={{ position: 'absolute', top: 0, right: 0, display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(0,0,0,0.4)', padding: '0.6rem 1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -154,7 +154,7 @@ const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
         <div style={{ color: phoneConnected ? '#10b981' : '#6b7280', fontSize: '0.72rem', marginBottom: 14 }}>
           STATUS: ● {phoneConnected ? 'CONNECTED' : 'DISCONNECTED'}
         </div>
-        
+
         {showQr ? (
           <div style={{ background: '#fff', padding: 16, borderRadius: 8, marginBottom: 18 }}>
             <QRCodeSVG value={controllerUrl} size={180} />
@@ -167,7 +167,7 @@ const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
             </div>
           </>
         )}
-        
+
         <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 14 }}>
           {!showQr && (
             <button style={S.btn} onClick={() => navigator.clipboard?.writeText(pairCode).catch(() => { })}>
@@ -266,7 +266,7 @@ const RCPathfinderGame = () => {
 
     let phoneTimeout = null;
     const phoneInput = { throttle: 0, steering: 0 };
-    
+
     const parseInputData = (data) => {
       if (data === 'STOP') {
         phoneInput.throttle = 0;
@@ -274,7 +274,7 @@ const RCPathfinderGame = () => {
       } else if (typeof data === 'string') {
         let throttle = 0;
         let steering = 0;
-        
+
         // Parse F/B
         const m = data.match(/([FB])(\d+)/);
         if (m) {
@@ -282,7 +282,7 @@ const RCPathfinderGame = () => {
           if (val === 99) val = 100;
           throttle = (val / 100) * (m[1] === 'F' ? 1 : -1);
         }
-        
+
         // Parse L/R
         const m2 = data.match(/([LR])(\d+)/);
         if (m2) {
@@ -290,7 +290,7 @@ const RCPathfinderGame = () => {
           if (val === 99) val = 100;
           steering = (val / 100) * (m2[1] === 'R' ? 1 : -1);
         }
-        
+
         phoneInput.throttle = Math.max(-1, Math.min(1, throttle));
         phoneInput.steering = Math.max(-1, Math.min(1, steering));
       }
@@ -316,7 +316,7 @@ const RCPathfinderGame = () => {
 
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
-      
+
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'webrtc', subtype: 'offer', sdp: offer }));
       }
@@ -324,12 +324,12 @@ const RCPathfinderGame = () => {
 
     const connectWs = () => {
       ws = new WebSocket(`${WS_BASE_URL}/api/game-ws`);
-      
+
       ws.onopen = () => {
         console.log('[Game] Connected to local WebSocket server');
         ws.send('REGISTER_GAME');
       };
-      
+
       ws.onmessage = async (event) => {
         try {
           const data = event.data;
@@ -345,7 +345,7 @@ const RCPathfinderGame = () => {
             }
             return;
           }
-          
+
           if (data === 'GAME_OK') {
             console.log('[Game] Registered with server');
             return;
@@ -390,7 +390,7 @@ const RCPathfinderGame = () => {
           console.error('[Game] Error parsing message:', e);
         }
       };
-      
+
       ws.onclose = () => {
         setTimeout(connectWs, 3000); // auto-reconnect
       };
@@ -409,9 +409,9 @@ const RCPathfinderGame = () => {
       timerElapsed: 0,
       distanceTravelled: 0,
       collisions: 0,
-      collisionCooldown: 0,
       collisionFlashTimer: 0,
       isColliding: false,
+      collisionCooldown: 0,
       checkpointsCollected: [],
       showOptimalPath: false,
       score: 1000,
@@ -476,8 +476,8 @@ const RCPathfinderGame = () => {
       g.timerElapsed = 0;
       g.distanceTravelled = 0;
       g.collisions = 0;
-      g.collisionCooldown = 0;
       g.collisionFlashTimer = 0;
+      g.collisionCooldown = 0;
       g.isColliding = false;
       g.score = 1000;
       g.routeAccum = 0;
@@ -590,13 +590,14 @@ const RCPathfinderGame = () => {
         steering,
         (x, y, rot, hw, hh) => mapGen.isCollision(x, y, rot, hw, hh),
         () => {
-          if (g.collisionCooldown > 0) return;
-          g.collisions++;
-          g.collisionCooldown = 0.5;
-          g.collisionFlashTimer = 2.5;
-          g.isColliding = true;
-          // Brief flash – cleared after 200 ms
-          setTimeout(() => { if (G.current) G.current.isColliding = false; }, 200);
+          if (g.collisionCooldown <= 0) {
+            g.collisions++;
+            g.collisionFlashTimer = 2.5;
+            g.collisionCooldown = 1.0; // 1 second cooldown
+            g.isColliding = true;
+            // Brief flash – cleared after 200 ms
+            setTimeout(() => { if (G.current) G.current.isColliding = false; }, 200);
+          }
         }
       );
 
@@ -623,8 +624,10 @@ const RCPathfinderGame = () => {
       if (g.collisionFlashTimer > 0) {
         g.collisionFlashTimer = Math.max(0, g.collisionFlashTimer - dt);
       }
+      
+      // Collision cooldown
       if (g.collisionCooldown > 0) {
-        g.collisionCooldown -= dt;
+        g.collisionCooldown = Math.max(0, g.collisionCooldown - dt);
       }
 
       // Checkpoint detection
