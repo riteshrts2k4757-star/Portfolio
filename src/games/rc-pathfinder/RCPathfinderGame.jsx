@@ -409,6 +409,7 @@ const RCPathfinderGame = () => {
       timerElapsed: 0,
       distanceTravelled: 0,
       collisions: 0,
+      collisionCooldown: 0,
       collisionFlashTimer: 0,
       isColliding: false,
       checkpointsCollected: [],
@@ -475,6 +476,7 @@ const RCPathfinderGame = () => {
       g.timerElapsed = 0;
       g.distanceTravelled = 0;
       g.collisions = 0;
+      g.collisionCooldown = 0;
       g.collisionFlashTimer = 0;
       g.isColliding = false;
       g.score = 1000;
@@ -525,6 +527,7 @@ const RCPathfinderGame = () => {
       g.playerRoute = [{ x: src.x, y: src.y }];
       g.distanceTravelled = 0;
       g.collisions = 0;
+      g.collisionCooldown = 0;
       g.score = 1000;
       g.routeAccum = 0;
       g.checkpointsCollected = new Array(g.mapData.checkpoints.length).fill(false);
@@ -587,7 +590,9 @@ const RCPathfinderGame = () => {
         steering,
         (x, y, rot, hw, hh) => mapGen.isCollision(x, y, rot, hw, hh),
         () => {
+          if (g.collisionCooldown > 0) return;
           g.collisions++;
+          g.collisionCooldown = 0.5;
           g.collisionFlashTimer = 2.5;
           g.isColliding = true;
           // Brief flash – cleared after 200 ms
@@ -617,6 +622,9 @@ const RCPathfinderGame = () => {
       // Fade collision flash
       if (g.collisionFlashTimer > 0) {
         g.collisionFlashTimer = Math.max(0, g.collisionFlashTimer - dt);
+      }
+      if (g.collisionCooldown > 0) {
+        g.collisionCooldown -= dt;
       }
 
       // Checkpoint detection
