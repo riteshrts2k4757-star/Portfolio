@@ -39,8 +39,15 @@ const Signup = () => {
       const data = await response.json();
       
       if (response.ok) {
-        setSuccessMessage('Registration successful! Please check your email to verify your account and complete signup.');
-        setFormData({ username: '', email: '', password: '', confirmPassword: '' });
+        if (data.token) {
+          // Fallback bypass: User was automatically created
+          login(data.token);
+          navigate('/account');
+        } else {
+          // Normal flow: Email sent successfully
+          setSuccessMessage('Registration successful! Please check your email to verify your account and complete signup.');
+          setFormData({ username: '', email: '', password: '', confirmPassword: '' });
+        }
       } else {
         setError(data.error || 'Registration failed');
       }

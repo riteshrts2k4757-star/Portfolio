@@ -87,7 +87,26 @@ export const register = async (req, res) => {
         await transporter.sendMail(mailOptions);
       } catch (emailErr) {
         console.error('Nodemailer Error:', emailErr);
-        return res.status(500).json({ error: 'Failed to send verification email. Your email provider or server might be blocking the connection.' });
+        console.log('⚠️ Bypassing email verification due to SMTP block...');
+        
+        try {
+          const newUser = await createUser(username, email, hashedPassword);
+          const loginToken = jwt.sign(
+            { id: newUser.id, email: newUser.email, role: newUser.role },
+            JWT_SECRET,
+            { expiresIn: '2h' }
+          );
+          return res.status(201).json({ 
+            message: 'Email blocked by server. Verification bypassed and account created automatically!', 
+            user: newUser,
+            token: loginToken 
+          });
+        } catch (dbErr) {
+          if (dbErr.code === '23505') {
+            return res.status(409).json({ error: 'Username or email is already taken by another account.' });
+          }
+          throw dbErr; // Let the outer catch handle it
+        }
       }
     } else {
       console.log('⚠️ Simulating verification email:', verificationLink);
