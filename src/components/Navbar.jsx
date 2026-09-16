@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="nav-links">
           <NavLink to="/" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Home</NavLink>
           <NavLink to="/chat" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Chat</NavLink>
-          <NavLink to="/gallery" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Gallery</NavLink>
+          <NavLink to="/tours" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Tours</NavLink>
           <NavLink to="/games" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Games</NavLink>
         </div>
       </div>
@@ -29,6 +29,8 @@ const Navbar = () => {
                 </div>
               )}
               <span style={{ fontWeight: '600' }}>{user.username}</span>
+              {user.role === 'admin' && <span style={{ fontSize: '0.7rem', background: 'var(--tour-primary)', color: 'white', padding: '2px 6px', borderRadius: '10px' }}>Admin</span>}
+              {user.role === 'tourguide' && <span style={{ fontSize: '0.7rem', background: '#3b82f6', color: 'white', padding: '2px 6px', borderRadius: '10px' }}>Guide</span>}
             </Link>
             <button onClick={logout} className="btn btn-outline nav-btn" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '0.4rem 0.8rem' }}>
               <LogOut size={16} /> Logout

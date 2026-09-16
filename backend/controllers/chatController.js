@@ -1,4 +1,4 @@
-import { getUsersWithRecentMessages, getConversation, markAsRead, saveMessage } from '../models/chatModel.js';
+import { getUsersWithRecentMessages, getConversation, markAsRead, saveMessage, deleteMessages } from '../models/chatModel.js';
 
 export const getChatUsers = async (req, res) => {
   try {
@@ -49,6 +49,23 @@ export const sendMessage = async (req, res) => {
     res.status(201).json(savedMessage);
   } catch (error) {
     console.error('Error sending message:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const deleteSelectedMessages = async (req, res) => {
+  try {
+    const currentUserId = req.user.id;
+    const { messageIds } = req.body;
+    
+    if (!messageIds || !Array.isArray(messageIds) || messageIds.length === 0) {
+      return res.status(400).json({ error: 'messageIds array is required' });
+    }
+    
+    await deleteMessages(currentUserId, messageIds);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting messages:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

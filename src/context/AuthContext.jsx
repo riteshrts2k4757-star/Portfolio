@@ -21,7 +21,10 @@ export const AuthProvider = ({ children }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        setUser(data.user);
+        setUser({
+          ...data.user,
+          role: data.user.role || 'user'
+        });
       } else {
         localStorage.removeItem('token');
         setUser(null);

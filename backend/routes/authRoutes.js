@@ -1,11 +1,12 @@
 import express from 'express';
-import { register, login, forgotPassword, uploadProfilePicture, updateProfile, getStats, saveGameResult } from '../controllers/authController.js';
+import { register, login, forgotPassword, uploadProfilePicture, updateProfile, getStats, saveGameResult, verifyEmail } from '../controllers/authController.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
 import { findUserById } from '../models/userModel.js';
 
 const router = express.Router();
 
 router.post('/register', register);
+router.post('/verify-email', verifyEmail);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.put('/profile-picture', verifyToken, uploadProfilePicture);

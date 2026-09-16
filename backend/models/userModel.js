@@ -28,7 +28,7 @@ export const findUserByEmail = async (email) => {
 export const findUserById = async (id) => {
   const { data, error } = await supabase
     .from('users')
-    .select('id, player_id, username, email, profile_picture, created_at')
+    .select('id, player_id, username, email, profile_picture, created_at, role')
     .eq('id', id)
     .single();
 
@@ -41,7 +41,7 @@ export const createUser = async (username, email, hashedPassword) => {
   const { data, error } = await supabase
     .from('users')
     .insert({ username, email, password: hashedPassword })
-    .select('id, player_id, username, email, profile_picture, created_at')
+    .select('id, player_id, username, email, profile_picture, created_at, role')
     .single();
 
   if (error) throw error;
@@ -53,7 +53,7 @@ export const updateProfilePicture = async (id, base64String) => {
     .from('users')
     .update({ profile_picture: base64String })
     .eq('id', id)
-    .select('id, player_id, username, email, profile_picture, created_at')
+    .select('id, player_id, username, email, profile_picture, created_at, role')
     .single();
 
   if (error) throw error;
@@ -70,7 +70,7 @@ export const updateUserProfile = async (id, username, email, hashedPassword) => 
     .from('users')
     .update(updateData)
     .eq('id', id)
-    .select('id, player_id, username, email, profile_picture, created_at')
+    .select('id, player_id, username, email, profile_picture, created_at, role')
     .single();
 
   if (error) throw error;

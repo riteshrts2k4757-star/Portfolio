@@ -45,11 +45,36 @@ export const markAsRead = async (senderId, receiverId) => {
   if (error) throw error;
 };
 
+export const deleteMessages = async (userId, messageIds) => {
+  const { error } = await supabase
+    .from('messages')
+    .delete()
+    .in('id', messageIds)
+    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+
+  if (error) throw error;
+};
+
 export const getUsersWithRecentMessages = async (currentUserId) => {
   // Call the database function created in Supabase SQL Editor
   const { data, error } = await supabase
     .rpc('get_users_with_recent_messages', { current_user_id: currentUserId });
 
   if (error) throw error;
+  
+  if (data && data.length > 0) {
+    const userIds = data.map(u => u.id);
+    const { data: profiles } = await supabase
+      .from('users')
+      .select('id, profile_picture')
+      .in('id', userIds);
+      
+    if (profiles) {
+      const profileMap = {};
+      profiles.forEach(p => profileMap[p.id] = p.profile_picture);
+      return data.map(u => ({ ...u, profile_picture: profileMap[u.id] }));
+    }
+  }
+  
   return data || [];
 };

@@ -416,3 +416,71 @@
     display: flex;
   }
 }
+/* Delete Button Styling */
+.delete-selected-btn {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+}
+
+.delete-selected-btn:hover:not(:disabled) {
+  background-color: #fca5a5;
+  color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.delete-selected-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Custom Checkbox for Messages */
+.message-checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.message-checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.8);
+  position: relative;
+  transition: all 0.2s ease;
+  margin: 0;
+}
+
+.message-checkbox:checked {
+  background-color: var(--accent-1);
+  border-color: var(--accent-1);
+}
+
+.message-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.message-checkbox:hover {
+  border-color: var(--accent-1);
+}

@@ -23,6 +23,12 @@ const Account = () => {
 
   // Game stats
   const [gameStats, setGameStats] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  
+  // Review state
+  const [reviewingBooking, setReviewingBooking] = useState(null);
+  const [reviewData, setReviewData] = useState({ rating: 5, review_text: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,7 +62,25 @@ const Account = () => {
         console.error('Failed to fetch game stats:', err);
       }
     };
+    
+    const fetchBookings = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/tours/bookings/my-bookings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setBookings(data.bookings || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch bookings:', err);
+      }
+    };
+    
     fetchStats();
+    fetchBookings();
   }, []);
 
   if (loading) {
@@ -166,6 +190,39 @@ const Account = () => {
       setError('Network error. Please try again.');
     } finally {
       setSavingProfile(false);
+    }
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    setSubmittingReview(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE_URL}/api/tours/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          tour_id: reviewingBooking.tour_id,
+          booking_id: reviewingBooking.id,
+          rating: parseInt(reviewData.rating),
+          review_text: reviewData.review_text
+        })
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess('Review submitted successfully!');
+        setReviewingBooking(null);
+        setReviewData({ rating: 5, review_text: '' });
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        alert(data.error || 'Failed to submit review');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error while submitting review');
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -285,6 +342,17 @@ const Account = () => {
             <LogOut size={18} />
             Log Out
           </button>
+
+          {user.role === 'admin' && (
+            <button onClick={() => navigate('/admin')} className="btn btn-outline" style={{ width: '100%', marginTop: '1rem', borderColor: 'var(--tour-primary)', color: 'var(--tour-primary)' }}>
+              Go to Admin Dashboard
+            </button>
+          )}
+          {user.role === 'tourguide' && (
+            <button onClick={() => navigate('/guide/dashboard')} className="btn btn-outline" style={{ width: '100%', marginTop: '1rem', borderColor: 'var(--tour-primary)', color: 'var(--tour-primary)' }}>
+              Go to Guide Dashboard
+            </button>
+          )}
           </div>
         </div>
 
@@ -340,6 +408,56 @@ const Account = () => {
           </div>
         )}
           </div>
+          
+          {/* My Tours / Bookings */}
+          <div className="account-stats-section" style={{ marginTop: '2rem' }}>
+            <h2 className="account-stats-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              My Tours
+            </h2>
+            
+            {bookings.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {bookings.map(booking => (
+                  <div key={booking.id} style={{ display: 'flex', gap: '1rem', background: 'var(--tour-surface-alt)', border: '1px solid var(--tour-border)', borderRadius: '12px', padding: '1rem', alignItems: 'center' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                      <img src={booking.tours?.image_url} alt="Tour" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{ margin: '0 0 0.25rem 0' }}>{booking.tours?.title}</h4>
+                      <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: 'var(--tour-text-muted)' }}>{booking.tour_date} • {booking.number_of_people} people</p>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.8rem', padding: '2px 8px', borderRadius: '10px', background: booking.payment_status === 'paid' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: booking.payment_status === 'paid' ? 'var(--tour-primary)' : '#f59e0b' }}>
+                          {booking.payment_status.toUpperCase()}
+                        </span>
+                        <span style={{ fontSize: '0.8rem', padding: '2px 8px', borderRadius: '10px', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
+                          {booking.booking_status.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <button onClick={() => navigate(`/tours/${booking.tour_id}`)} className="btn btn-outline btn-sm">View Tour</button>
+                      {(booking.payment_status === 'paid' || booking.booking_status === 'confirmed' || booking.booking_status === 'completed') && (
+                        <button 
+                          onClick={() => setReviewingBooking(booking)} 
+                          className="btn btn-primary btn-sm" 
+                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+                        >
+                          Add Review
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="account-stats-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <p>No tours booked yet. Explore our destinations!</p>
+                <button onClick={() => navigate('/tours')} className="btn btn-primary" style={{ marginTop: '1rem' }}>Explore Tours</button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -384,6 +502,71 @@ const Account = () => {
                 {uploading ? 'Saving...' : 'Save Picture'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {reviewingBooking && (
+        <div className="account-modal-overlay">
+          <div className="account-modal" style={{ maxWidth: '500px', width: '90%' }}>
+            <button onClick={() => setReviewingBooking(null)} className="account-modal-close">
+              <X size={24} />
+            </button>
+            <h3 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Review Your Experience</h3>
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'var(--text-muted)' }}>
+              How was your trip to <strong>{reviewingBooking.tours?.title}</strong>?
+            </div>
+            
+            <form onSubmit={handleSubmitReview} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontWeight: '600' }}>Rating (1-5)</label>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                  {[1,2,3,4,5].map(num => (
+                    <button 
+                      type="button" 
+                      key={num}
+                      onClick={() => setReviewData({...reviewData, rating: num})}
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        cursor: 'pointer',
+                        color: num <= reviewData.rating ? '#fbbf24' : 'var(--glass-border)'
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontWeight: '600' }}>Your Review</label>
+                <textarea 
+                  required 
+                  value={reviewData.review_text} 
+                  onChange={e => setReviewData({...reviewData, review_text: e.target.value})}
+                  style={{ 
+                    padding: '1rem', 
+                    borderRadius: '12px', 
+                    border: '1px solid var(--glass-border)', 
+                    background: 'var(--glass-bg)',
+                    color: 'var(--text-main)',
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                    minHeight: '100px'
+                  }}
+                  placeholder="Tell us what you liked (or didn't like)..."
+                ></textarea>
+              </div>
+
+              <div className="account-modal-actions" style={{ marginTop: '1rem' }}>
+                <button type="button" className="btn btn-outline" onClick={() => setReviewingBooking(null)}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={submittingReview}>
+                  {submittingReview ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

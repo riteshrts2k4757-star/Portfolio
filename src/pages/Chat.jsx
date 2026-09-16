@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Search, Send, Bot, ArrowLeft, Check, CheckCheck } from 'lucide-react';
+import { Search, Send, Bot, ArrowLeft, Check, CheckCheck, Trash2 } from 'lucide-react';
 import { API_BASE_URL, WS_BASE_URL } from '../apiConfig';
 import './Chat.css';
 
@@ -18,6 +18,16 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState('');
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   
+  // AI State
+  const [aiMessages, setAiMessages] = useState([{ role: 'ai', content: 'Hi there! I am your AI assistant. You can ask me how to book a tour, how the chat works, or how to play the remote control game!' }]);
+  const [aiInput, setAiInput] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const aiContainerRef = useRef(null);
+  
+  // Selection State
+  const [selectedMessages, setSelectedMessages] = useState(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   const ws = useRef(null);
   const messagesContainerRef = useRef(null);
 
@@ -27,6 +37,12 @@ const Chat = () => {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages, activeMobilePanel]);
+
+  useEffect(() => {
+    if (aiContainerRef.current) {
+      aiContainerRef.current.scrollTop = aiContainerRef.current.scrollHeight;
+    }
+  }, [aiMessages, isAiLoading, activeMobilePanel]);
 
   // Fetch initial members
   const fetchMembers = async () => {
@@ -142,6 +158,7 @@ const Chat = () => {
   const handleSelectUser = (member) => {
     setSelectedUser(member);
     setActiveMobilePanel('chat');
+    setSelectedMessages(new Set());
     fetchConversation(member.id);
   };
 
@@ -157,6 +174,58 @@ const Chat = () => {
     }));
     
     setNewMessage('');
+  };
+
+  const handleDeleteMessages = async () => {
+    if (selectedMessages.size === 0) return;
+    setIsDeleting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/chat/messages`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ messageIds: Array.from(selectedMessages) })
+      });
+      
+      if (response.ok) {
+        setMessages(prev => prev.filter(m => !selectedMessages.has(m.id)));
+        setSelectedMessages(new Set());
+      } else {
+        alert("Failed to delete messages");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting messages");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleAiSubmit = async (e) => {
+    e.preventDefault();
+    if (!aiInput.trim() || isAiLoading) return;
+    
+    const userMsg = aiInput.trim();
+    setAiInput('');
+    setAiMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setIsAiLoading(true);
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chat/ai`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: aiMessages, userMessage: userMsg })
+      });
+      const data = await response.json();
+      setAiMessages(prev => [...prev, { role: 'ai', content: data.reply }]);
+    } catch (error) {
+      setAiMessages(prev => [...prev, { role: 'ai', content: 'Oops! Unable to reach the AI at the moment.' }]);
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   const filteredMembers = members.filter(m => 
@@ -181,24 +250,47 @@ const Chat = () => {
             <ArrowLeft size={18} /> Back to Members
           </button>
         </div>
-        <div className="panel-header">
+        <div className="panel-header" style={{ justifyContent: 'space-between' }}>
           <h2><Bot size={24} /> AI Assistant</h2>
+          <button 
+            className="mobile-nav-btn" 
+            onClick={() => setAiMessages([{ role: 'ai', content: 'Hi there! I am your AI assistant. You can ask me how to book a tour, how the chat works, or how to play the remote control game!' }])}
+            style={{ color: 'var(--accent-1)', fontSize: '0.85rem' }}
+          >
+            Clear All
+          </button>
         </div>
-        <div className="chat-messages">
-          <div className="empty-chat-state">
-            <Bot className="ai-icon-large" />
-            <h3>Ask me anything</h3>
-            <p>I can help you with travel tips, Jharkhand tourism info, or website navigation.</p>
-            <p style={{ fontSize: '0.8rem', marginTop: '10px' }}>(AI Integration Coming Soon)</p>
-          </div>
+        <div className="chat-messages" ref={aiContainerRef}>
+          {aiMessages.map((msg, index) => (
+            <div key={index} className={`message-wrapper ${msg.role === 'user' ? 'sent' : 'received'}`}>
+              <div className="message-bubble" style={msg.role === 'ai' ? { background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16,185,129,0.2)', color: 'var(--text-main)' } : {}}>
+                {msg.content}
+              </div>
+            </div>
+          ))}
+          {isAiLoading && (
+            <div className="message-wrapper received">
+              <div className="message-bubble" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16,185,129,0.2)', color: 'var(--text-main)' }}>
+                Thinking...
+              </div>
+            </div>
+          )}
         </div>
         <div className="chat-input-area">
-          <form className="chat-input-wrapper" onSubmit={(e) => { e.preventDefault(); alert("AI Integration coming soon!"); setNewMessage(''); }}>
+          <form className="chat-input-wrapper" onSubmit={handleAiSubmit}>
             <textarea 
-              placeholder="Ask AI..."
+              placeholder="Ask me anything in your language..."
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleAiSubmit(e);
+                }
+              }}
               rows={1}
             />
-            <button type="submit" className="send-btn" disabled>
+            <button type="submit" className="send-btn" disabled={!aiInput.trim() || isAiLoading}>
               <Send size={16} />
             </button>
           </form>
@@ -215,17 +307,39 @@ const Chat = () => {
         
         {selectedUser ? (
           <>
-            <div className="panel-header">
-              <div className="member-avatar" style={{ width: '35px', height: '35px' }}>
-                {selectedUser.username.charAt(0).toUpperCase()}
-                <div className={`member-status ${onlineUsers.has(selectedUser.id) ? 'status-online' : 'status-offline'}`} style={{ width: '10px', height: '10px' }}></div>
+            <div className="panel-header" style={{ justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div 
+                  className="member-avatar" 
+                  style={{ 
+                    width: '35px', 
+                    height: '35px',
+                    backgroundImage: selectedUser.profile_picture ? `url(${selectedUser.profile_picture})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: selectedUser.profile_picture ? 'transparent' : '#fff'
+                  }}
+                >
+                  {!selectedUser.profile_picture && selectedUser.username.charAt(0).toUpperCase()}
+                  <div className={`member-status ${onlineUsers.has(selectedUser.id) ? 'status-online' : 'status-offline'}`} style={{ width: '10px', height: '10px' }}></div>
+                </div>
+                <div>
+                  <h3 style={{ margin: 0 }}>{selectedUser.username}</h3>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {onlineUsers.has(selectedUser.id) ? 'Online' : 'Offline'}
+                  </span>
+                </div>
               </div>
-              <div>
-                <h3 style={{ margin: 0 }}>{selectedUser.username}</h3>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  {onlineUsers.has(selectedUser.id) ? 'Online' : 'Offline'}
-                </span>
-              </div>
+              
+              {selectedMessages.size > 0 && (
+                <button 
+                  className="delete-selected-btn" 
+                  onClick={handleDeleteMessages}
+                  disabled={isDeleting}
+                >
+                  <Trash2 size={16} /> Delete ({selectedMessages.size})
+                </button>
+              )}
             </div>
             
             <div className="chat-messages" ref={messagesContainerRef}>
@@ -239,12 +353,38 @@ const Chat = () => {
                   const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                   
                   return (
-                    <div key={msg.id || index} className={`message-wrapper ${isSent ? 'sent' : 'received'}`}>
-                      <div className="message-bubble">
-                        {msg.message}
-                      </div>
-                      <div className="message-meta">
-                        {time} {isSent && (msg.is_read ? <CheckCheck size={14} color="#4ade80" /> : <Check size={14} />)}
+                    <div 
+                      key={msg.id || index} 
+                      className={`message-wrapper ${isSent ? 'sent' : 'received'}`} 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px',
+                        flexDirection: isSent ? 'row-reverse' : 'row'
+                      }}
+                    >
+                      {msg.id && (
+                        <div className="message-checkbox-container">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedMessages.has(msg.id)}
+                            onChange={(e) => {
+                              const newSet = new Set(selectedMessages);
+                              if (e.target.checked) newSet.add(msg.id);
+                              else newSet.delete(msg.id);
+                              setSelectedMessages(newSet);
+                            }}
+                            className="message-checkbox"
+                          />
+                        </div>
+                      )}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: isSent ? 'flex-end' : 'flex-start', maxWidth: 'calc(100% - 35px)' }}>
+                        <div className="message-bubble">
+                          {msg.message}
+                        </div>
+                        <div className="message-meta">
+                          {time} {isSent && (msg.is_read ? <CheckCheck size={14} color="#4ade80" /> : <Check size={14} />)}
+                        </div>
                       </div>
                     </div>
                   );
@@ -316,8 +456,16 @@ const Chat = () => {
                 className={`member-item ${selectedUser?.id === member.id ? 'active' : ''}`}
                 onClick={() => handleSelectUser(member)}
               >
-                <div className="member-avatar">
-                  {member.username.charAt(0).toUpperCase()}
+                <div 
+                  className="member-avatar"
+                  style={{
+                    backgroundImage: member.profile_picture ? `url(${member.profile_picture})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: member.profile_picture ? 'transparent' : '#fff'
+                  }}
+                >
+                  {!member.profile_picture && member.username.charAt(0).toUpperCase()}
                   <div className={`member-status ${onlineUsers.has(member.id) ? 'status-online' : 'status-offline'}`}></div>
                 </div>
                 <div className="member-info">

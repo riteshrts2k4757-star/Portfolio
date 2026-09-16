@@ -7,6 +7,7 @@ import { API_BASE_URL } from '../apiConfig';
 const Signup = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -18,6 +19,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -37,8 +39,8 @@ const Signup = () => {
       const data = await response.json();
       
       if (response.ok) {
-        login(data.token);
-        navigate('/account');
+        setSuccessMessage('Registration successful! Please check your email to verify your account and complete signup.');
+        setFormData({ username: '', email: '', password: '', confirmPassword: '' });
       } else {
         setError(data.error || 'Registration failed');
       }
@@ -58,6 +60,7 @@ const Signup = () => {
         </div>
 
         {error && <p style={{color: '#ef4444', marginBottom: '1rem', background: '#fee2e2', padding: '0.75rem', borderRadius: '8px', fontSize: '0.9rem'}}>{error}</p>}
+        {successMessage && <p style={{color: '#15803d', marginBottom: '1rem', background: '#dcfce7', padding: '0.75rem', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '500', textAlign: 'center'}}>{successMessage}</p>}
         
         <form onSubmit={handleSubmit}>
           <div className="auth-input-group">

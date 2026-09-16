@@ -9,6 +9,10 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import authRoutes from './backend/routes/authRoutes.js';
 import chatRoutes from './backend/routes/chatRoutes.js';
+import tourRoutes from './backend/routes/tourRoutes.js';
+import adminRoutes from './backend/routes/adminRoutes.js';
+import aiRoutes from './backend/routes/aiRoutes.js';
+import contactRoutes from './backend/routes/contactRoutes.js';
 import { createUsersTable, createGameStatsTable } from './backend/models/userModel.js';
 import { createMessagesTable } from './backend/models/chatModel.js';
 import { setupChatServer } from './backend/websocket/chatServer.js';
@@ -50,7 +54,11 @@ initDb();
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/chat/ai', aiRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/tours', tourRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Serve controller HTML (always available)
 app.get('/controller', (req, res) => {
