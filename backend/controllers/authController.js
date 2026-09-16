@@ -31,14 +31,22 @@ export const register = async (req, res) => {
 
     // Setup Nodemailer
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER || 'riteshrts2k4757@gmail.com',
         pass: process.env.EMAIL_PASS
-      }
+      },
+      connectionTimeout: 10000 // 10 seconds max wait
     });
 
-    const verificationLink = `http://localhost:5173/verify?token=${verificationToken}`;
+    // In production, use the deployed URL
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://portfolio-mocha-sigma-c3spyxg0mi.vercel.app'
+      : 'http://localhost:5173';
+      
+    const verificationLink = `${baseUrl}/verify?token=${verificationToken}`;
 
     const mailOptions = {
       from: process.env.EMAIL_USER || 'riteshrts2k4757@gmail.com',
@@ -75,7 +83,12 @@ export const register = async (req, res) => {
     };
 
     if (process.env.EMAIL_PASS) {
-      await transporter.sendMail(mailOptions);
+      try {
+        await transporter.sendMail(mailOptions);
+      } catch (emailErr) {
+        console.error('Nodemailer Error:', emailErr);
+        return res.status(500).json({ error: 'Failed to send verification email. Your email provider or server might be blocking the connection.' });
+      }
     } else {
       console.log('⚠️ Simulating verification email:', verificationLink);
     }
