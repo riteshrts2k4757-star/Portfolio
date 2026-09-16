@@ -1,6 +1,6 @@
 # 🚀 Ritesh Kumar Rana — Portfolio
 
-A full-stack personal portfolio web application built with **React**, **Express**, and **PostgreSQL**. Features a real-time chat system, an interactive photo gallery, a playable RC Pathfinder game with phone-as-controller support, and a complete authentication system.
+A full-stack personal portfolio web application built with **React**, **Express**, and **Supabase (PostgreSQL)**. Features a real-time chat system with AI integration, an interactive photo gallery, a playable RC Pathfinder game with phone-as-controller support, a comprehensive Tour Booking system, and a complete authentication system with email verification.
 
 ---
 
@@ -11,10 +11,17 @@ A full-stack personal portfolio web application built with **React**, **Express*
 - Glassmorphism-styled UI with smooth animations
 - Responsive layout with dark/light mode support
 
-### 💬 Real-Time Chat
+### 💬 Real-Time Chat & AI Assistant
 - WebSocket-powered live messaging between authenticated users
-- Online presence indicators and message history
-- Persistent messages stored in PostgreSQL
+- Integrated **AI Chatbot** powered by the Gemini API (gemini-3.6-flash)
+- Chat history clearing and granular message deletion
+- Online presence indicators and persistent message history
+
+### ✈️ Tour Booking System
+- Browse, explore, and book various tour packages
+- **Admin Dashboard**: Manage users, tours, and bookings
+- **Guide Dashboard**: Dedicated portal for tour guides
+- Simulated payment confirmation flow
 
 ### 🖼️ Gallery
 - Interactive photo gallery showcasing images
@@ -26,11 +33,17 @@ A full-stack personal portfolio web application built with **React**, **Express*
 - HUD with live stats: speed, time, distance, collisions, and score
 - Game statistics tracking (high score, games played, best time, etc.)
 
-### 👤 Authentication & Accounts
+### 👤 Authentication & Security
 - Secure signup/login with JWT-based authentication
+- **Email Verification Flow**: JWT-powered email links via Nodemailer to verify users before database insertion
 - Profile picture upload with cropping support
 - Password management (change & forgot password)
-- Personal game statistics dashboard
+- Rate Limiting on public APIs to prevent spam
+
+### 📬 Contact Us
+- Premium Glassmorphic UI design
+- Real email delivery functionality via Nodemailer integration
+- Rate-limited to prevent spam
 
 ---
 
@@ -40,12 +53,13 @@ A full-stack personal portfolio web application built with **React**, **Express*
 | ------------ | ------------------------------------------------------------- |
 | **Frontend** | React 19, React Router 7, Vite 8, Lucide Icons               |
 | **Backend**  | Express 5, Node.js                                            |
-| **Database** | PostgreSQL (via `pg`)                                         |
+| **Database** | Supabase (PostgreSQL)                                         |
 | **Realtime** | WebSocket (`ws`) for chat and game controller                 |
 | **Auth**     | JWT (`jsonwebtoken`), bcrypt (`bcryptjs`)                     |
+| **AI**       | Google Gemini API (`@google/genai`)                           |
+| **Email**    | Nodemailer                                                    |
 | **Security** | Helmet, CORS, Express Rate Limit                              |
 | **Maps**     | Leaflet + React-Leaflet                                       |
-| **Other**    | QR Code generation, Image cropping, Gzip compression (morgan) |
 
 ---
 
@@ -54,23 +68,19 @@ A full-stack personal portfolio web application built with **React**, **Express*
 ```
 portfolio/
 ├── backend/
-│   ├── controllers/       # Auth & chat request handlers
-│   ├── middleware/         # JWT auth middleware
-│   ├── models/            # PostgreSQL table schemas
+│   ├── controllers/       # Auth, chat, tour, ai, & contact handlers
+│   ├── middleware/        # JWT auth & security middlewares
+│   ├── models/            # Supabase interaction models
 │   ├── routes/            # API route definitions
 │   └── websocket/         # Chat & game WebSocket servers
 ├── public/                # Static assets (images, icons)
 ├── src/
-│   ├── assets/            # Images & SVGs
-│   ├── components/        # Reusable UI components (Navbar, Header, etc.)
+│   ├── components/        # Reusable UI components
 │   ├── context/           # React context (AuthContext)
-│   ├── data/              # GeoJSON & location data
-│   ├── games/
-│   │   └── rc-pathfinder/ # Complete game engine (physics, rendering, scoring)
-│   └── pages/             # Route pages (Home, Chat, Gallery, Games, etc.)
-├── controller.html        # Phone controller UI for RC Pathfinder
+│   ├── games/             # RC Pathfinder game engine
+│   └── pages/             # Route pages (Home, Chat, Tours, Admin, etc.)
 ├── server.js              # Express server entry point
-├── db.js                  # PostgreSQL connection pool
+├── db.js                  # Supabase connection setup
 └── package.json
 ```
 
@@ -81,7 +91,7 @@ portfolio/
 ### Prerequisites
 
 - **Node.js** v18+
-- **PostgreSQL** database
+- **Supabase** Project
 - **npm**
 
 ### 1. Clone the Repository
@@ -102,12 +112,20 @@ npm install
 Create a `.env` file in the root directory:
 
 ```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=your_database_name
-DB_USER=your_username
-DB_PASSWORD=your_password
+# Database (Supabase)
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_anon_key
+
+# Authentication
 JWT_SECRET=your_jwt_secret_key
+
+# Email System
+EMAIL_USER=your_gmail_address
+EMAIL_PASS=your_gmail_app_password
+EMAIL_SECRET=your_email_verification_secret_key
+
+# AI Chatbot
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ### 4. Run in Development
@@ -119,18 +137,6 @@ npm run dev:all
 
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000
-
-### 5. Run in Production
-
-```bash
-# Build the React frontend
-npm run build
-
-# Start the production server (serves both API & frontend)
-npm start
-```
-
-The entire app will be available at **http://localhost:5000**.
 
 ---
 
@@ -156,22 +162,21 @@ The RC Pathfinder game supports using your **phone as a controller**:
 3. Scan the QR code with your phone
 4. Tilt your phone to steer the car!
 
-The controller communicates over WebSocket through the main server, so it works over any network — no extra ports or local network required.
+The controller communicates over WebSocket through the main server, so it works over any network.
 
 ---
 
-## 🔒 API Endpoints
+## 🔒 Selected API Endpoints
 
 | Method | Endpoint                    | Description              |
 | ------ | --------------------------- | ------------------------ |
-| POST   | `/api/auth/register`        | Create a new account     |
+| POST   | `/api/auth/register`        | Initiate Sign up (sends email) |
+| POST   | `/api/auth/verify-email`    | Verify email & create account |
 | POST   | `/api/auth/login`           | Login & receive JWT      |
-| GET    | `/api/auth/me`              | Get current user profile |
-| PUT    | `/api/auth/profile-picture` | Update profile picture   |
-| GET    | `/api/auth/game-stats`      | Get game statistics      |
-| POST   | `/api/auth/game-stats`      | Save game statistics     |
-| GET    | `/api/chat/messages/:id`    | Get chat messages        |
-| GET    | `/api/chat/users`           | Get all chat users       |
+| POST   | `/api/contact`              | Send Contact Us email    |
+| POST   | `/api/chat/ai`              | Communicate with Gemini AI |
+| DELETE | `/api/chat/messages`        | Delete chat messages     |
+| GET    | `/api/tours`                | Get all available tours  |
 
 ---
 
