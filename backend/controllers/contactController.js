@@ -14,6 +14,10 @@ export const submitContactForm = async (req, res) => {
     const emailUser = process.env.EMAIL_USER || 'riteshrts2k4757@gmail.com';
     const emailPass = process.env.EMAIL_PASS;
 
+    if (!emailPass) {
+      return res.status(503).json({ error: 'Email delivery is not configured. Please use the direct email link.' });
+    }
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -42,13 +46,8 @@ export const submitContactForm = async (req, res) => {
       `
     };
 
-    if (emailPass) {
-      await transporter.sendMail(mailOptions);
-      console.log('✅ Real email sent successfully to riteshrana2k4@gmail.com');
-    } else {
-      console.log('⚠️ EMAIL_PASS not set. Simulating successful email send in development:');
-      console.log(`From: ${emailUser} | To: riteshrana2k4@gmail.com | Subject: ${subject}`);
-    }
+    await transporter.sendMail(mailOptions);
+    console.log('✅ Real email sent successfully to riteshrana2k4@gmail.com');
 
     res.status(200).json({ success: true, message: 'Message sent successfully' });
 

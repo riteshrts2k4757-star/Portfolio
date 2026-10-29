@@ -40,7 +40,7 @@ const HUD = ({ ui, user }) => (
         ['TIME', ui.timeStr],
         ['DISTANCE', `${ui.distStr} m`],
         ['COLLISION', ui.collisions],
-        ['SCORE', ui.score, '#15803d'],
+        ['SCORE', ui.score, 'var(--accent-2)'],
       ].map(([lbl, val, col]) => (
         <div style={S.hudRow} key={lbl}>
           <span style={S.hudLabel}>{lbl}</span>
@@ -51,8 +51,8 @@ const HUD = ({ ui, user }) => (
 
     {/* Right: status */}
     <div style={{ textAlign: 'right' }}>
-      <div style={{ fontSize: '0.65rem', color: '#6b7280', marginBottom: 4 }}>STATUS</div>
-      <div style={{ color: statusDot[ui.status] ?? '#10b981', fontWeight: 700, letterSpacing: '0.05em', fontSize: '0.8rem' }}>
+      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>STATUS</div>
+      <div style={{ color: statusDot[ui.status] ?? 'var(--accent-2)', fontWeight: 700, letterSpacing: '0.05em', fontSize: '0.9rem' }}>
         ● {ui.status}
       </div>
     </div>
@@ -61,13 +61,13 @@ const HUD = ({ ui, user }) => (
     {user && (
       <div style={{ position: 'absolute', top: 0, right: 0, display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(0,0,0,0.4)', padding: '0.6rem 1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '0.7rem', color: '#9ca3af', letterSpacing: '0.05em' }}>PLAYER</div>
-          <div style={{ fontSize: '0.9rem', color: 'var(--accent-1)', fontWeight: 600 }}>{user.username}</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>PLAYER</div>
+          <div style={{ fontSize: '1rem', color: 'var(--accent-2)', fontWeight: 600 }}>{user.username}</div>
         </div>
         {user.profile_picture ? (
           <img src={user.profile_picture} alt="Avatar" style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.1)', objectFit: 'cover' }} />
         ) : (
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}>?</div>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-raised)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>?</div>
         )}
       </div>
     )}
@@ -75,10 +75,10 @@ const HUD = ({ ui, user }) => (
 );
 
 const PauseOverlay = ({ onResume }) => (
-  <div style={S.overlay}>
-    <div style={S.overlayBox}>
+  <div className="rc-game-overlay" style={S.overlay}>
+    <div className="rc-game-overlay-box" style={S.overlayBox}>
       <div style={S.overlayTitle}>MISSION PAUSED</div>
-      <p style={{ color: '#6b7280', fontSize: '0.75rem', marginBottom: 24 }}>
+      <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: 24 }}>
         Game physics and timer are frozen.
       </p>
       <button style={S.btn} onClick={onResume}>▶  RESUME MISSION</button>
@@ -94,46 +94,46 @@ const CompletionOverlay = ({ data, onNewMap, onPlayAgain, user }) => {
     ['CHECKPOINTS', `${data.checkpointsHit}/${data.totalCheckpoints}`],
   ];
   return (
-    <div style={S.overlay}>
-      <div style={{ ...S.overlayBox, minWidth: 340 }}>
+    <div className="rc-game-overlay" style={S.overlay}>
+      <div className="rc-game-overlay-box" style={{ ...S.overlayBox, minWidth: 340 }}>
         {user && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', marginBottom: '1.2rem', paddingBottom: '1.2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
             {user.profile_picture ? (
               <img src={user.profile_picture} alt="Avatar" style={{ width: 44, height: 44, borderRadius: '50%', border: '2px solid rgba(16,185,129,0.3)', objectFit: 'cover' }} />
             ) : (
-              <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', border: '2px solid rgba(16,185,129,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981' }}>U</div>
+              <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(var(--accent-rgb),0.1)', border: '2px solid rgba(var(--accent-rgb),0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-2)' }}>U</div>
             )}
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.65rem', color: '#6b7280', letterSpacing: '0.1em' }}>PILOT</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>PILOT</div>
               <div style={{ fontSize: '1.1rem', color: 'var(--accent-1)', fontWeight: 700 }}>{user.username}</div>
             </div>
           </div>
         )}
-        <div style={{ color: '#059669', fontSize: '1.35rem', fontWeight: 800, letterSpacing: '0.12em', marginBottom: 4 }}>
+        <div style={{ color: 'var(--accent-2)', fontSize: '1.35rem', fontWeight: 800, letterSpacing: '0.08em', marginBottom: 4 }}>
           MISSION COMPLETE
         </div>
-        <div style={{ color: '#10b981', fontSize: '0.72rem', letterSpacing: '0.1em', marginBottom: 22 }}>
+        <div style={{ color: 'var(--accent-2)', fontSize: '0.9rem', letterSpacing: '0.1em', marginBottom: 22 }}>
           DESTINATION REACHED
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem', marginBottom: 18 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', marginBottom: 18 }}>
           <tbody>
             {rows.map(([k, v]) => (
               <tr key={k}>
-                <td style={{ textAlign: 'left', color: '#6b7280', padding: '3px 0', paddingRight: 28 }}>{k}</td>
-                <td style={{ textAlign: 'right', color: '#374151', fontWeight: 600 }}>{v}</td>
+                <td style={{ textAlign: 'left', color: 'var(--text-muted)', padding: '3px 0', paddingRight: 28 }}>{k}</td>
+                <td style={{ textAlign: 'right', color: 'var(--text-main)', fontWeight: 600 }}>{v}</td>
               </tr>
             ))}
           </tbody>
         </table>
         <div style={{ marginBottom: 6 }}>
-          <span style={{ fontSize: '2.6rem', fontWeight: 800, color: '#15803d', textShadow: '0 0 12px rgba(21,128,61,0.2)' }}>
+          <span style={{ fontSize: '2.6rem', fontWeight: 800, color: 'var(--accent-2)' }}>
             {data.score}
           </span>
         </div>
-        <div style={{ color: '#15803d', fontSize: '0.72rem', letterSpacing: '0.14em', marginBottom: 26 }}>{data.rank}</div>
+        <div style={{ color: 'var(--accent-2)', fontSize: '0.9rem', letterSpacing: '0.14em', marginBottom: 26 }}>{data.rank}</div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           <button style={S.btn} onClick={onNewMap}>NEW MAP</button>
-          <button style={{ ...S.btn, borderColor: '#10b981', color: '#059669', background: 'rgba(16,185,129,0.12)' }} onClick={onPlayAgain}>
+          <button style={{ ...S.btn, borderColor: 'var(--accent-2)', color: 'var(--accent-2)', background: 'rgba(var(--accent-rgb),0.12)' }} onClick={onPlayAgain}>
             PLAY AGAIN
           </button>
         </div>
@@ -148,10 +148,10 @@ const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
   const controllerUrl = `${API_BASE_URL}/controller`;
 
   return (
-    <div style={S.overlay}>
-      <div style={S.overlayBox}>
+    <div className="rc-game-overlay" style={S.overlay}>
+      <div className="rc-game-overlay-box" style={S.overlayBox}>
         <div style={S.overlayTitle}>PHONE CONTROLLER</div>
-        <div style={{ color: phoneConnected ? '#10b981' : '#6b7280', fontSize: '0.72rem', marginBottom: 14 }}>
+        <div style={{ color: phoneConnected ? 'var(--accent-2)' : 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 14 }}>
           STATUS: ● {phoneConnected ? 'CONNECTED' : 'DISCONNECTED'}
         </div>
 
@@ -161,8 +161,8 @@ const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
           </div>
         ) : (
           <>
-            <div style={{ color: '#9ca3af', fontSize: '0.72rem', marginBottom: 6 }}>Pair Code</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '0.32em', color: '#06b6d4', textShadow: '0 0 18px #06b6d4', marginBottom: 18 }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 6 }}>Pair Code</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '0.2em', color: 'var(--accent-2)', marginBottom: 18 }}>
               {pairCode}
             </div>
           </>
@@ -179,9 +179,9 @@ const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
           </button>
         </div>
         {!phoneConnected && (
-          <div style={{ color: '#6b7280', fontSize: '0.72rem', marginBottom: 22 }}>Waiting for phone connection...</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 22 }}>Waiting for phone connection...</div>
         )}
-        <button style={{ ...S.btn, color: '#6b7280', borderColor: '#374151' }} onClick={onClose}>CLOSE</button>
+        <button style={{ ...S.btn, color: 'var(--text-muted)', borderColor: 'var(--glass-border)' }} onClick={onClose}>CLOSE</button>
       </div>
     </div>
   );
@@ -190,7 +190,7 @@ const PhonePanel = ({ pairCode, phoneConnected, onClose }) => {
 const ReadyBanner = ({ onStart }) => (
   <div style={S.readyBanner}>
     <div style={S.readyBadge}>● READY</div>
-    <div style={{ color: '#6b7280', fontSize: '0.75rem', marginBottom: 18, textAlign: 'center', maxWidth: 260 }}>
+    <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 18, textAlign: 'center', maxWidth: 300 }}>
       Navigate your RC car from SOURCE to DESTINATION
     </div>
     <button style={S.startBtn} onClick={onStart}>▶  START MISSION</button>
@@ -721,7 +721,26 @@ const RCPathfinderGame = () => {
     };
 
     const engine = new Engine(update, render);
-    engine.start();
+    let canvasIsVisible = false;
+    const syncEngineVisibility = () => {
+      if (canvasIsVisible && document.visibilityState === 'visible') engine.start();
+      else engine.stop();
+    };
+    const handleVisibilityChange = () => syncEngineVisibility();
+    let canvasObserver;
+
+    if ('IntersectionObserver' in window) {
+      canvasObserver = new IntersectionObserver(([entry]) => {
+        canvasIsVisible = entry.isIntersecting;
+        syncEngineVisibility();
+      });
+      canvasObserver.observe(canvas);
+    } else {
+      canvasIsVisible = true;
+      syncEngineVisibility();
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // ── Keyboard handling ─────────────────────────────────
     const onKeyDown = (e) => {
@@ -768,6 +787,8 @@ const RCPathfinderGame = () => {
     // ── Cleanup ───────────────────────────────────────────
     return () => {
       engine.stop();
+      canvasObserver?.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (ws) {
         ws.onclose = null; // Prevent reconnect
         if (ws.readyState === 1) { // OPEN
@@ -816,7 +837,7 @@ const RCPathfinderGame = () => {
 
   // ── Render ───────────────────────────────────────────────
   return (
-    <div ref={rootRef} style={S.root}>
+    <div ref={rootRef} className="rc-pathfinder-game" style={S.root}>
 
       {/* ── Game canvas area ── */}
       <div style={S.canvasWrap}>
@@ -938,9 +959,8 @@ const RCPathfinderGame = () => {
 // ─────────────────────────────────────────────────────────────
 //  Reusable button component
 // ─────────────────────────────────────────────────────────────
-const Btn = ({ children, onClick, disabled, active, accent = '#06b6d4', style: extraStyle }) => {
+const Btn = ({ children, onClick, disabled, active, accent = 'var(--accent-2)', style: extraStyle }) => {
   const [hovered, setHovered] = useState(false);
-  const activeColor = active ? accent : undefined;
   return (
     <button
       onClick={onClick}
@@ -949,7 +969,11 @@ const Btn = ({ children, onClick, disabled, active, accent = '#06b6d4', style: e
       onMouseLeave={() => setHovered(false)}
       style={{
         ...S.btn,
-        ...(active ? { borderColor: accent, color: accent, background: `${accent}18` } : {}),
+        ...(active ? {
+          borderColor: accent,
+          color: accent,
+          background: accent.startsWith('var(') ? 'rgba(var(--accent-rgb), 0.14)' : `${accent}18`
+        } : {}),
         ...(hovered && !disabled ? { borderColor: accent, color: accent } : {}),
         ...(disabled ? { opacity: 0.38, cursor: 'not-allowed' } : {}),
         ...extraStyle,
@@ -969,9 +993,9 @@ const S = {
     flexDirection: 'column',
     width: '100%',
     height: '100%',
-    background: '#f0fdf4',
-    fontFamily: "'Inter', sans-serif",
-    color: '#374151',
+    background: 'var(--surface-raised)',
+    fontFamily: 'var(--font-body)',
+    color: 'var(--text-main)',
     borderRadius: 12,
     overflow: 'hidden',
   },
@@ -985,13 +1009,17 @@ const S = {
     display: 'block',
     width: '100%',
     height: '100%',
-    background: '#f0fdf4',
+    background: 'var(--surface-raised)',
   },
   minimap: {
     position: 'absolute',
     bottom: 14,
     right: 14,
-    borderRadius: 4,
+    display: 'block',
+    border: '1px solid var(--glass-border)',
+    borderRadius: 6,
+    background: 'var(--surface-color)',
+    boxShadow: '0 4px 14px var(--shadow-color)',
     zIndex: 5,
     pointerEvents: 'none',
   },
@@ -1004,20 +1032,19 @@ const S = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    background: 'transparent',
     zIndex: 10,
     pointerEvents: 'none',
   },
   title: {
     margin: 0,
-    fontSize: '1.2rem',
+    fontSize: '1.35rem',
     fontWeight: 800,
-    color: '#059669',
+    color: 'var(--accent-2)',
     letterSpacing: '0.05em',
   },
   simMode: {
-    fontSize: '0.7rem',
-    color: '#6b7280',
+    fontSize: '0.82rem',
+    color: 'var(--text-muted)',
     marginBottom: 8,
     letterSpacing: '0.05em',
     fontWeight: 600,
@@ -1025,22 +1052,22 @@ const S = {
   hudRow: {
     display: 'flex',
     gap: 10,
-    fontSize: '0.75rem',
+    fontSize: '0.88rem',
     marginBottom: 2,
   },
   hudLabel: {
-    color: '#6b7280',
+    color: 'var(--text-muted)',
     minWidth: 82,
     fontWeight: 600,
   },
   hudVal: {
-    color: '#374151',
+    color: 'var(--text-main)',
     fontWeight: 700,
   },
   controls: {
     padding: '12px 20px',
-    background: '#ffffff',
-    borderTop: '1px solid #d1fae5',
+    background: 'var(--surface-color)',
+    borderTop: '1px solid var(--glass-border)',
     display: 'flex',
     flexDirection: 'column',
     gap: 8,
@@ -1054,12 +1081,12 @@ const S = {
   },
   btn: {
     padding: '6px 14px',
-    background: '#d1fae5',
-    border: '1px solid #34d399',
-    color: '#065f46',
+    background: 'rgba(var(--accent-rgb), 0.12)',
+    border: '1px solid rgba(var(--accent-rgb), 0.38)',
+    color: 'var(--accent-2)',
     borderRadius: 6,
-    fontSize: '0.75rem',
-    fontFamily: "'Inter', sans-serif",
+    fontSize: '0.86rem',
+    fontFamily: 'var(--font-body)',
     fontWeight: 600,
     cursor: 'pointer',
     letterSpacing: '0.02em',
@@ -1068,15 +1095,15 @@ const S = {
     whiteSpace: 'nowrap',
   },
   diffLabel: {
-    fontSize: '0.75rem',
-    color: '#4b5563',
+    fontSize: '0.86rem',
+    color: 'var(--text-muted)',
     marginRight: 6,
     fontWeight: 600,
   },
   overlay: {
     position: 'absolute',
     inset: 0,
-    background: 'rgba(240,253,244,0.7)',
+    background: 'rgba(10, 14, 11, 0.72)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1084,19 +1111,20 @@ const S = {
     backdropFilter: 'blur(4px)',
   },
   overlayBox: {
-    background: '#ffffff',
-    border: '2px solid #a7f3d0',
+    background: 'var(--surface-color)',
+    border: '1px solid var(--glass-border)',
     borderRadius: 12,
     padding: '32px 40px',
     textAlign: 'center',
-    boxShadow: '0 10px 40px rgba(16,185,129,0.1)',
-    fontFamily: "'Inter', sans-serif",
+    boxShadow: '0 18px 48px var(--shadow-color)',
+    color: 'var(--text-main)',
+    fontFamily: 'var(--font-body)',
     minWidth: 300,
   },
   overlayTitle: {
-    fontSize: '1.2rem',
+    fontSize: '1.3rem',
     fontWeight: 800,
-    color: '#059669',
+    color: 'var(--accent-2)',
     letterSpacing: '0.05em',
     marginBottom: 16,
   },
@@ -1113,10 +1141,10 @@ const S = {
   },
   readyBadge: {
     display: 'inline-block',
-    background: '#dbeafe',
-    border: '1px solid #bfdbfe',
-    color: '#1e40af',
-    fontSize: '0.75rem',
+    background: 'rgba(var(--accent-rgb), 0.12)',
+    border: '1px solid rgba(var(--accent-rgb), 0.3)',
+    color: 'var(--accent-2)',
+    fontSize: '0.86rem',
     fontWeight: 700,
     letterSpacing: '0.1em',
     padding: '4px 16px',
@@ -1125,21 +1153,21 @@ const S = {
   },
   startBtn: {
     padding: '12px 36px',
-    background: '#10b981',
+    background: 'var(--accent-button)',
     border: 'none',
     color: '#ffffff',
     borderRadius: 8,
     fontSize: '0.9rem',
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: 'var(--font-body)',
     cursor: 'pointer',
     letterSpacing: '0.05em',
     fontWeight: 700,
-    boxShadow: '0 4px 14px rgba(16,185,129,0.3)',
-    transition: 'all 0.2s ease',
+    boxShadow: 'none',
+    transition: 'background-color 0.2s ease',
   },
   hint: {
-    fontSize: '0.7rem',
-    color: '#6b7280',
+    fontSize: '0.82rem',
+    color: 'var(--text-muted)',
     marginTop: 4,
   },
 };

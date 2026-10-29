@@ -8,7 +8,6 @@
   padding: 40px 20px;
 }
 
-/* Background Animated Blobs */
 .contact-blob-1 {
   position: absolute;
   top: -10%;
@@ -18,7 +17,7 @@
   background: radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%);
   border-radius: 50%;
   z-index: -1;
-  animation: float 15s infinite ease-in-out alternate;
+  pointer-events: none;
 }
 
 .contact-blob-2 {
@@ -30,13 +29,7 @@
   background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
   border-radius: 50%;
   z-index: -1;
-  animation: float 20s infinite ease-in-out alternate-reverse;
-}
-
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(30px, 50px) scale(1.05); }
-  100% { transform: translate(-30px, 20px) scale(0.95); }
+  pointer-events: none;
 }
 
 .contact-header {
@@ -69,6 +62,8 @@
   animation: fadeUp 0.8s ease-out forwards;
   animation-delay: 0.2s;
   opacity: 0;
+  position: relative;
+  z-index: 0;
 }
 
 @media (max-width: 850px) {
@@ -79,19 +74,17 @@
 
 /* Glass Cards */
 .contact-glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  background: var(--surface-color);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px var(--shadow-color);
   border-radius: 24px;
   padding: 40px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .contact-glass-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 15px 50px var(--shadow-color);
 }
 
 .contact-info-item {
@@ -101,24 +94,24 @@
   margin-bottom: 30px;
   padding: 15px;
   border-radius: 16px;
-  transition: background 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .contact-info-item:hover {
-  background: rgba(34, 197, 94, 0.05);
+  background: rgba(var(--accent-rgb), 0.05);
 }
 
 .contact-icon-box {
   width: 50px;
   height: 50px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.25) 100%);
+  background: rgba(var(--accent-rgb), 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--accent-2);
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
+  box-shadow: none;
 }
 
 .contact-info-text h4 {
@@ -143,6 +136,27 @@
   gap: 25px;
 }
 
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.contact-error-message {
+  padding: 12px 15px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.contact-error-message a {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
 .input-group {
   display: flex;
   flex-direction: column;
@@ -159,24 +173,29 @@
 .contact-input {
   width: 100%;
   padding: 15px 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--surface-raised);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
   font-size: 1rem;
   color: var(--text-main);
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   font-family: inherit;
 }
 
 .contact-input:focus {
   outline: none;
   border-color: var(--accent-1);
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
-  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+  background: var(--surface-color);
+}
+
+.contact-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
 }
 
 .contact-submit-btn {
-  background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+  background: var(--accent-button);
   color: white;
   border: none;
   padding: 16px 30px;
@@ -188,14 +207,14 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: none;
   margin-top: 10px;
 }
 
 .contact-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 15px 25px rgba(34, 197, 94, 0.4);
+  box-shadow: none;
 }
 
 .contact-submit-btn:active:not(:disabled) {
@@ -205,6 +224,11 @@
 .contact-submit-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .contact-glass-card { padding: 26px 20px; }
+  .contact-form-grid { grid-template-columns: 1fr; gap: 25px; }
 }
 
 @keyframes fadeDown {

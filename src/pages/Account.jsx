@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { User, Camera, X, Edit2, Save, LogOut, Shield, Mail, KeyRound, Trophy, Target, Timer, Zap, Award, Clock, Gamepad2 } from 'lucide-react';
 import AvatarEditor from 'react-avatar-editor';
 import { API_BASE_URL } from '../apiConfig';
+import './Account.css';
 
 const Account = () => {
   const { user, logout, loading, fetchUser } = useContext(AuthContext);

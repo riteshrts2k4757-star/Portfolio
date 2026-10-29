@@ -7,9 +7,10 @@ A full-stack personal portfolio web application built with **React**, **Express*
 ## ✨ Features
 
 ### 🏠 Home
-- Personal introduction with profile summary, education, skills, and projects
-- Glassmorphism-styled UI with smooth animations
-- Responsive layout with dark/light mode support
+- Responsive developer portfolio highlighting full-stack, IoT, and applied ML work
+- Interactive project previews, engineering architecture, skills filters, and education
+- Persistent light/dark themes with green, orange, and purple accent choices
+- Reduced-motion support and keyboard-accessible navigation
 
 ### 💬 Real-Time Chat & AI Assistant
 - WebSocket-powered live messaging between authenticated users
@@ -41,8 +42,8 @@ A full-stack personal portfolio web application built with **React**, **Express*
 - Rate Limiting on public APIs to prevent spam
 
 ### 📬 Contact Us
-- Premium Glassmorphic UI design
-- Real email delivery functionality via Nodemailer integration
+- Contact form with direct email fallback
+- Nodemailer delivery when `EMAIL_USER` and `EMAIL_PASS` are configured
 - Rate-limited to prevent spam
 
 ---
@@ -140,11 +141,34 @@ npm run dev:all
 
 ---
 
+### Test from a phone on your hotspot
+
+1. Connect the Windows laptop and phone to the same phone hotspot.
+2. Double-click `start-phone-test.bat` from the project folder. It opens separate windows for the frontend (port `5173`) and backend (port `5000`); keep both open.
+3. In Windows Command Prompt, run `ipconfig`. Under the Wi-Fi adapter connected to the phone hotspot, note its `IPv4 Address` (do not use a WSL, Docker, or loopback address).
+4. On the phone, open `http://<that-IPv4-address>:5173`, for example `http://192.168.1.23:5173`.
+
+The Vite frontend and Express backend already listen on network interfaces. The frontend uses the same hostname as the page for API and WebSocket requests, so it reaches the laptop backend at port `5000` rather than the phone's own `localhost`. Local email verification links also use the current development hostname when the request comes from Vite on port `5173`.
+
+The portfolio's static pages and RC Pathfinder canvas can run without the backend. Login, registration, chat, tour data/bookings, contact requests, and saved game stats need the Express backend and a configured Supabase project. AI chat additionally needs `GEMINI_API_KEY`; email delivery needs the email settings in `.env`.
+
+If Windows Firewall blocks access, first set the hotspot's Windows network profile to **Private** in **Settings → Network & Internet → Wi-Fi → the connected hotspot → Network profile type**. In an elevated PowerShell, add inbound rules for only the two development ports on the Private profile:
+
+```powershell
+New-NetFirewallRule -DisplayName "Portfolio phone test - Vite" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 5173 -Profile Private
+New-NetFirewallRule -DisplayName "Portfolio phone test - API" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 5000 -Profile Private
+```
+
+Do not disable Windows Firewall. Confirm the network category with `Get-NetConnectionProfile`. If the page still will not load, verify both service windows show that their servers started, confirm the phone and laptop are still on the same hotspot, check the hotspot's connected-device/client-isolation settings, and re-check the Wi-Fi IPv4 address with `ipconfig`.
+
+---
+
 ## 📜 Available Scripts
 
 | Script          | Description                                         |
 | --------------- | --------------------------------------------------- |
 | `npm run dev`   | Start Vite dev server (frontend only)               |
+| `npm run dev:phone` | Start Vite on all interfaces for phone/LAN testing |
 | `npm run server`| Start Express backend server                        |
 | `npm run dev:all`| Start frontend + backend concurrently (development)|
 | `npm run build` | Build the React app for production                  |

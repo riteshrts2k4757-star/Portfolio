@@ -40,9 +40,8 @@ const ContactUs = () => {
 
   return (
     <div className="contact-page-wrapper">
-      {/* Decorative Blobs */}
-      <div className="contact-blob-1"></div>
-      <div className="contact-blob-2"></div>
+      <div className="contact-blob-1" aria-hidden="true"></div>
+      <div className="contact-blob-2" aria-hidden="true"></div>
 
       <div className="contact-header">
         <h1>Contact Us</h1>
@@ -54,7 +53,7 @@ const ContactUs = () => {
         <div className="contact-glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ fontSize: '1.8rem', marginBottom: '1rem', color: 'var(--text-main)', fontWeight: '700' }}>Get in Touch</h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', lineHeight: '1.6', fontSize: '1.05rem' }}>
-            Have questions about our tours, games, or features? Send us a message and our team will get back to you within 24 hours.
+            Have an idea or want to talk about a project? Send me a message and I will get back to you.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
@@ -112,16 +111,19 @@ const ContactUs = () => {
               <h3 style={{ fontSize: '1.8rem', margin: '0 0 20px 0', color: 'var(--text-main)', fontWeight: '700' }}>Send a Message</h3>
               
               {status === 'error' && (
-                <div style={{ background: '#fee2e2', color: '#ef4444', padding: '12px 15px', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '500' }}>
-                  {errorMessage}
+                <div className="contact-error-message" role="alert">
+                  {errorMessage} <a href="mailto:riteshrana2k4@gmail.com">Email me directly</a>.
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div className="contact-form-grid">
                 <div className="input-group">
-                  <label>Your Name</label>
+                  <label htmlFor="contact-name">Your Name</label>
                   <input 
+                    id="contact-name"
+                    name="name"
                     type="text" 
+                    autoComplete="name"
                     required 
                     value={formData.name} 
                     onChange={e => setFormData({...formData, name: e.target.value})} 
@@ -130,9 +132,12 @@ const ContactUs = () => {
                   />
                 </div>
                 <div className="input-group">
-                  <label>Email Address</label>
+                  <label htmlFor="contact-email">Email Address</label>
                   <input 
+                    id="contact-email"
+                    name="email"
                     type="email" 
+                    autoComplete="email"
                     required 
                     value={formData.email} 
                     onChange={e => setFormData({...formData, email: e.target.value})} 
@@ -143,8 +148,10 @@ const ContactUs = () => {
               </div>
               
               <div className="input-group">
-                <label>Subject</label>
+                <label htmlFor="contact-subject">Subject</label>
                 <input 
+                  id="contact-subject"
+                  name="subject"
                   type="text" 
                   required 
                   value={formData.subject} 
@@ -155,8 +162,10 @@ const ContactUs = () => {
               </div>
 
               <div className="input-group">
-                <label>Message</label>
+                <label htmlFor="contact-message">Message</label>
                 <textarea 
+                  id="contact-message"
+                  name="message"
                   required 
                   value={formData.message} 
                   onChange={e => setFormData({...formData, message: e.target.value})} 
@@ -167,7 +176,7 @@ const ContactUs = () => {
                 ></textarea>
               </div>
 
-              <button type="submit" className="contact-submit-btn" disabled={status === 'loading'}>
+              <button type="submit" className="contact-submit-btn" disabled={status === 'loading'} aria-busy={status === 'loading'}>
                 {status === 'loading' ? (
                   <><Loader2 size={20} className="spinner" style={{ animation: 'spin 1s linear infinite' }} /> Sending...</>
                 ) : (

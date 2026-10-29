@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Mail, Lock } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
+import './Auth.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -55,10 +56,10 @@ const Login = () => {
       <div className="auth-card">
         <div className="auth-header">
           <h2>{forgotPasswordMode ? 'Forgot Password' : 'Welcome Back'}</h2>
-          <p>{forgotPasswordMode ? 'Enter your email to login and change your password' : 'Enter your details to access your account'}</p>
+          <p>{forgotPasswordMode ? 'Enter your email to continue to your profile and choose a new password.' : 'Sign in to manage your trips, profile, and game progress.'}</p>
         </div>
 
-        {error && <p style={{color: '#ef4444', marginBottom: '1rem', background: '#fee2e2', padding: '0.75rem', borderRadius: '8px', fontSize: '0.9rem'}}>{error}</p>}
+        {error && <p className="auth-message auth-message-error" role="alert">{error}</p>}
         
         <form onSubmit={handleSubmit}>
           <div className="auth-input-group">
@@ -67,6 +68,8 @@ const Login = () => {
               type="email" 
               name="email" 
               placeholder="Email address" 
+              aria-label="Email address"
+              autoComplete="email"
               className="auth-input-premium" 
               value={formData.email} 
               onChange={handleChange} 
@@ -82,6 +85,8 @@ const Login = () => {
                   type="password" 
                   name="password" 
                   placeholder="Password" 
+                  aria-label="Password"
+                  autoComplete="current-password"
                   className="auth-input-premium" 
                   value={formData.password} 
                   onChange={handleChange} 
@@ -118,6 +123,7 @@ const Login = () => {
           )}
         </form>
 
+        <p className="auth-context-note">Your account keeps your bookings and RC Pathfinder progress together.</p>
         <div className="auth-footer">
           Don't have an account? <Link to="/signup">Sign up here</Link>
         </div>

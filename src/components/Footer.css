@@ -1,0 +1,49 @@
+.portfolio-footer {
+  padding: 50px max(24px, calc((100% - 1160px) / 2)) 18px;
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-main);
+  background: var(--surface-color);
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr 0.8fr;
+  gap: 45px;
+  padding-bottom: 38px;
+}
+
+.footer-name {
+  color: var(--text-main);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.footer-name span { color: var(--accent-2); }
+.footer-identity p { max-width: 280px; margin: 10px 0 0; color: var(--text-muted); font-size: 0.82rem; line-height: 1.65; }
+.footer-navigation h2,.footer-connect h2 { margin: 0 0 13px; color: var(--text-muted); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.footer-navigation > div { display: grid; grid-template-columns: repeat(2, max-content); gap: 9px 23px; }
+.footer-navigation a,.footer-connect a { color: var(--text-main); font-size: 0.76rem; text-decoration: none; }
+.footer-navigation a:hover,.footer-connect a:hover { color: var(--accent-2); }
+.footer-connect { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.footer-connect h2 { margin-bottom: 3px; }
+.footer-connect a { display: flex; align-items: center; gap: 8px; }
+.footer-connect svg { color: var(--accent-2); }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 16px; border-top: 1px solid var(--glass-border); color: var(--text-muted); font-size: 0.68rem; }
+.back-to-top { display: flex; align-items: center; gap: 7px; color: var(--text-main); text-decoration: none; }
+.back-to-top:hover { color: var(--accent-2); }
+
+@media (max-width: 650px) {
+  .portfolio-footer { padding: 38px 20px 16px; }
+  .footer-main { grid-template-columns: 1fr 1fr; gap: 32px 18px; }
+  .footer-identity { grid-column: 1 / -1; }
+  .footer-bottom { flex-wrap: wrap; gap: 10px 15px; }
+  .footer-bottom > span:nth-child(2) { display: none; }
+}
+
+@media (max-width: 380px) {
+  .footer-main { grid-template-columns: 1fr; }
+  .footer-identity { grid-column: auto; }
+}

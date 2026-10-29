@@ -762,6 +762,120 @@ body.dark-mode .admin-table tbody tr:hover {
   color: #ef4444;
 }
 
+/* Route surfaces use the portfolio's html-level theme tokens. */
+.tours-page {
+  margin-top: 0;
+  color: var(--text-main);
+  background:
+    radial-gradient(ellipse at 87% 14%, rgba(var(--accent-rgb), 0.06), transparent 34%),
+    var(--bg-color);
+  min-height: calc(100vh - 150px);
+}
+
+.tours-filters-wrapper {
+  padding: 1.1rem 24px;
+  background: var(--surface-color);
+  border-bottom-color: var(--glass-border);
+}
+
+.tours-search-bar,.tours-filter-select {
+  background-color: var(--surface-raised);
+  color: var(--text-main);
+  border-color: var(--glass-border);
+}
+
+.tours-list-section { margin: 2rem auto 4rem; }
+
+.tours-grid { gap: 1.25rem; }
+
+.tour-card,.tour-booking-widget,.booking-flow-container,.booking-form-area {
+  background: var(--surface-color);
+  border-color: var(--glass-border);
+  box-shadow: 0 15px 40px var(--shadow-color);
+  border-radius: 12px;
+}
+
+.tour-card:hover { box-shadow: 0 20px 48px var(--shadow-color); }
+
+.tour-card-badge {
+  background: rgba(16, 20, 17, 0.84);
+  color: #fbbf24;
+}
+
+.tour-details-page,.booking-split-layout { max-width: 1120px; }
+
+.tour-gallery-hero {
+  height: clamp(220px, 35vw, 390px);
+  border-radius: 12px;
+}
+
+.tour-info-layout { gap: 1.5rem; }
+
+.tour-booking-widget,.booking-form-area { padding: clamp(1.25rem, 3vw, 2rem); }
+
+.booking-summary-sidebar {
+  background: var(--surface-color);
+  border-color: var(--glass-border);
+  border-radius: 12px;
+}
+
+.booking-form-area { color: var(--text-main); }
+
+.booking-form-area input,
+.booking-form-area select,
+.booking-form-area textarea,
+.admin-content input,
+.admin-content select,
+.admin-content textarea {
+  background-color: var(--surface-raised);
+  color: var(--text-main);
+  border-color: var(--glass-border);
+}
+
+.passenger-counter { background: var(--surface-raised); }
+
+.admin-nav-item.active { background: rgba(var(--accent-rgb), 0.12); }
+.admin-nav-item:hover { background: var(--surface-raised); }
+.admin-stat-card,.admin-table-container,.admin-modal {
+  background: var(--surface-color);
+  border-color: var(--glass-border);
+  color: var(--text-main);
+}
+
+.admin-table th { background: var(--surface-raised); }
+.admin-table tbody tr:hover { background: rgba(var(--accent-rgb), 0.06); }
+.admin-table td { color: var(--text-main); }
+
+:root[data-theme='dark'] .auth-card {
+  background: var(--surface-color);
+  border-color: var(--glass-border);
+  color: var(--text-main);
+}
+
+:root[data-theme='dark'] .auth-card :where(h1,p,span,div) {
+  color: var(--text-main) !important;
+}
+
+:root[data-theme='dark'] .auth-card p { color: var(--text-muted) !important; }
+
+:root[data-theme='dark'] .auth-card div[style*="background"] {
+  background: var(--surface-raised) !important;
+  border-color: var(--glass-border) !important;
+}
+
+:root[data-theme='dark'] .auth-card svg { color: var(--accent-2) !important; }
+
+@media (max-width: 640px) {
+  .tours-filters-wrapper { padding: 1rem 16px; }
+  .tours-search-bar { min-width: 100%; max-width: none; }
+  .tours-grid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .tours-list-section { padding: 0 16px; }
+  .tour-details-page { padding: 0 16px; }
+  .booking-split-layout { margin: 1.25rem auto; }
+  .booking-summary-content { padding: 1.25rem; }
+  .booking-form-area { padding: 1.25rem 1rem; }
+}
+
 /* Modals */
 .admin-modal-overlay {
   position: fixed;

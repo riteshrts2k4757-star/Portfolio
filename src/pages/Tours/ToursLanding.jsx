@@ -40,6 +40,14 @@ const ToursLanding = () => {
 
   return (
     <div className="tours-page">
+      <div className="app-route-heading">
+        <div className="app-route-heading-inner">
+          <p className="app-route-kicker">TRAVEL · EXPLORE · BOOK</p>
+          <h1>Find your next <span>good story.</span></h1>
+          <p>Discover destinations, compare tour experiences, and plan a trip that feels like yours.</p>
+        </div>
+      </div>
+
       {/* FILTERS - Moved just below navbar */}
       <div className="tours-filters-wrapper">
         <div className="tours-filters-container">
@@ -73,14 +81,6 @@ const ToursLanding = () => {
               <option value="Hard">Hard</option>
             </select>
           </div>
-        </div>
-      </div>
-
-      {/* Light-weight Header matching existing site */}
-      <div className="header-container" style={{ padding: '3rem 5%', textAlign: 'center', justifyContent: 'center' }}>
-        <div className="header-text" style={{ alignItems: 'center' }}>
-          <h1>Explore Tours</h1>
-          <h2>Discover breathtaking destinations and handpicked experiences</h2>
         </div>
       </div>
 

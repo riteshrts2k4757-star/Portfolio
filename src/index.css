@@ -1,23 +1,50 @@
 :root {
-  --bg-color: #f0fdf4;
-  --text-main: #111827;
-  --text-muted: #4b5563;
-  --accent-1: #4ade80; /* Light Green */
-  --accent-2: #22c55e; /* Green */
-  --glass-bg: rgba(0, 0, 0, 0.03);
-  --glass-border: rgba(0, 0, 0, 0.1);
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --bg-color: #f5f7f5;
+  --surface-color: #ffffff;
+  --surface-raised: #f0f3f0;
+  --text-main: #18221c;
+  --text-muted: #57645c;
+  --accent-1: #4ade80;
+  --accent-2: #18783b;
+  --accent-button: #157339;
+  --accent-rgb: 34, 197, 94;
+  --glass-bg: rgba(24, 34, 28, 0.03);
+  --glass-border: rgba(24, 34, 28, 0.12);
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --shadow-color: rgba(15, 23, 18, 0.08);
+  --tour-primary: var(--accent-2);
+  --tour-surface: var(--surface-color);
+  --tour-surface-alt: var(--surface-raised);
+  --tour-border: var(--glass-border);
+  --tour-text-muted: var(--text-muted);
 }
 
-body.dark-mode {
-  --bg-color: #0b1120;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --accent-1: #22c55e;
+:root[data-theme='dark'] {
+  --bg-color: #101311;
+  --surface-color: #171b18;
+  --surface-raised: #202622;
+  --text-main: #f0f5f0;
+  --text-muted: #a4afa7;
+  --accent-1: #4ade80;
   --accent-2: #4ade80;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.035);
+  --glass-border: rgba(229, 239, 230, 0.12);
+  --shadow-color: rgba(0, 0, 0, 0.28);
+}
+
+:root[data-accent='orange'] {
+  --accent-1: #fb923c;
+  --accent-2: #c2410c;
+  --accent-rgb: 249, 115, 22;
+  --accent-button: #b54708;
+}
+
+:root[data-accent='purple'] {
+  --accent-1: #c4b5fd;
+  --accent-2: #6d28d9;
+  --accent-rgb: 139, 92, 246;
+  --accent-button: #6538c9;
 }
 
 body {
@@ -26,20 +53,16 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(74, 222, 128, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(34, 197, 94, 0.15), transparent 25%);
-  background-attachment: fixed;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: auto;
+  background-image: radial-gradient(circle at 12% 18%, rgba(var(--accent-rgb), 0.08), transparent 28%);
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-body.dark-mode {
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(74, 222, 128, 0.05), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(34, 197, 94, 0.05), transparent 25%);
-}
+:root[data-theme='dark'][data-accent='orange'] { --accent-2: #fb923c; }
+:root[data-theme='dark'][data-accent='purple'] { --accent-2: #c4b5fd; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
@@ -47,6 +70,11 @@ h1, h2, h3, h4, h5, h6 {
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 82px;
 }
 
 /* Scrollbar styles */
@@ -57,6 +85,37 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--bg-color);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-1);
+  background: var(--accent-2);
   border-radius: 4px;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #fff;
+  background: var(--accent-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { User, Mail, Lock } from 'lucide-react';
 import { API_BASE_URL } from '../apiConfig';
+import './Auth.css';
 
 const Signup = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
@@ -63,11 +64,11 @@ const Signup = () => {
       <div className="auth-card">
         <div className="auth-header">
           <h2>Create Account</h2>
-          <p>Join us and claim your Player ID</p>
+          <p>Create an account to manage your trips and keep track of your game progress.</p>
         </div>
 
-        {error && <p style={{color: '#ef4444', marginBottom: '1rem', background: '#fee2e2', padding: '0.75rem', borderRadius: '8px', fontSize: '0.9rem'}}>{error}</p>}
-        {successMessage && <p style={{color: '#15803d', marginBottom: '1rem', background: '#dcfce7', padding: '0.75rem', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '500', textAlign: 'center'}}>{successMessage}</p>}
+        {error && <p className="auth-message auth-message-error" role="alert">{error}</p>}
+        {successMessage && <p className="auth-message auth-message-success" role="status">{successMessage}</p>}
         
         <form onSubmit={handleSubmit}>
           <div className="auth-input-group">
@@ -76,6 +77,8 @@ const Signup = () => {
               type="text" 
               name="username" 
               placeholder="Full Name or Username" 
+              aria-label="Full name or username"
+              autoComplete="username"
               className="auth-input-premium" 
               value={formData.username} 
               onChange={handleChange} 
@@ -89,6 +92,8 @@ const Signup = () => {
               type="email" 
               name="email" 
               placeholder="Email address" 
+              aria-label="Email address"
+              autoComplete="email"
               className="auth-input-premium" 
               value={formData.email} 
               onChange={handleChange} 
@@ -102,6 +107,8 @@ const Signup = () => {
               type="password" 
               name="password" 
               placeholder="Password" 
+              aria-label="Password"
+              autoComplete="new-password"
               className="auth-input-premium" 
               value={formData.password} 
               onChange={handleChange} 
@@ -115,6 +122,8 @@ const Signup = () => {
               type="password" 
               name="confirmPassword" 
               placeholder="Confirm Password" 
+              aria-label="Confirm password"
+              autoComplete="new-password"
               className="auth-input-premium" 
               value={formData.confirmPassword} 
               onChange={handleChange} 
@@ -127,6 +136,7 @@ const Signup = () => {
           </button>
         </form>
 
+        <p className="auth-context-note">After you register, check your inbox for an email verification link.</p>
         <div className="auth-footer">
           Already have an account? <Link to="/login">Log in here</Link>
         </div>

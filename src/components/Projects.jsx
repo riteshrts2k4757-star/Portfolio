@@ -19,11 +19,6 @@ const Projects = () => {
       tags: ["ESP32", "Ultrasonic Sensor", "Relay", "Web Dashboard"],
       description: "Designed and implemented an IoT based system to monitor water level in the tank in real-time. Automated motor ON/OFF using relay based on water level.",
       github: "github.com/Shreekant-Bharti/BeyondInfinity.git"
-    },
-    {
-      title: "IoT-Based RC Plane Control",
-      tags: ["React Native", "IoT", "Mobile App"],
-      description: "Designed a mobile application to control an RC plane using wireless communication. Integrated app with embedded hardware for real-time commands and monitoring."
     }
   ];
 

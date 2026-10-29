@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import './FAQ.css';
 
 const faqData = [
   {
@@ -35,49 +36,54 @@ const FAQ = () => {
   };
 
   return (
-    <div className="page-container" style={{ alignItems: 'center' }}>
-      <div className="header-container" style={{ padding: '3rem 5%', textAlign: 'center', justifyContent: 'center', marginBottom: '3rem', borderRadius: '20px', width: '100%', maxWidth: '1000px' }}>
-        <div className="header-text" style={{ alignItems: 'center' }}>
+    <main className="faq-page">
+      <header className="faq-heading">
+        <div className="faq-heading-content">
+          <p className="faq-kicker">SUPPORT · ANSWERS</p>
           <h1>Need Help?</h1>
-          <h2>Frequently Asked Questions</h2>
+          <p>Frequently Asked Questions</p>
         </div>
-      </div>
+      </header>
 
-      <div style={{ maxWidth: '800px', width: '100%', display: 'flex', flexDirection: 'column', gap: '3rem', textAlign: 'left' }}>
+      <div className="faq-content">
         {faqData.map((section, sIdx) => (
-          <div key={sIdx}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: 'var(--accent-2)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '30px', height: '2px', background: 'var(--accent-2)', display: 'inline-block' }}></span>
+          <section className="faq-category" key={section.category}>
+            <h2 className="faq-category-title">
+              <span aria-hidden="true" />
               {section.category}
-            </h3>
+            </h2>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="faq-list">
               {section.questions.map((item, qIdx) => {
                 const uniqueIdx = `${sIdx}-${qIdx}`;
                 const isOpen = openIndex === uniqueIdx;
+                const answerId = `faq-answer-${sIdx}-${qIdx}`;
                 return (
-                  <div key={qIdx} style={{ background: 'rgba(255,255,255,0.65)', backdropFilter: 'blur(12px)', border: `1px solid ${isOpen ? 'var(--accent-1)' : 'rgba(0,0,0,0.06)'}`, borderRadius: '12px', overflow: 'hidden', transition: 'all 0.3s' }}>
+                  <article className={`faq-item${isOpen ? ' is-open' : ''}`} key={item.q}>
                     <button 
+                      className="faq-question"
+                      type="button"
                       onClick={() => toggleAccordion(uniqueIdx)}
-                      style={{ width: '100%', padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontWeight: '600', fontSize: '1.05rem', color: 'var(--text-main)' }}
+                      aria-expanded={isOpen}
+                      aria-controls={answerId}
                     >
-                      {item.q}
-                      {isOpen ? <ChevronUp size={20} color="var(--accent-2)" /> : <ChevronDown size={20} color="var(--text-muted)" />}
+                      <span>{item.q}</span>
+                      {isOpen ? <ChevronUp size={20} aria-hidden="true" /> : <ChevronDown size={20} aria-hidden="true" />}
                     </button>
                     
-                    {isOpen && (
-                      <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', color: 'var(--text-muted)', lineHeight: '1.6', fontSize: '0.95rem', animation: 'fadeIn 0.3s ease-out' }}>
+                    <div className="faq-answer" id={answerId} hidden={!isOpen}>
+                      <div className="faq-answer-content">
                         {item.a}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  </article>
                 )
               })}
             </div>
-          </div>
+          </section>
         ))}
       </div>
-    </div>
+    </main>
   );
 };
 

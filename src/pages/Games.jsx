@@ -1,95 +1,56 @@
-import React from 'react';
-import { Camera, Globe, MousePointerClick, Gamepad2, ChevronRight } from 'lucide-react';
+import { Camera, ChevronRight, Gamepad2, Globe2, MousePointerClick } from 'lucide-react';
 import RCPathfinderGame from '../games/rc-pathfinder/RCPathfinderGame';
+import './Games.css';
 
-const Games = () => {
+const controllerSteps = [
+  { icon: Camera, label: 'Scan the QR code' },
+  { icon: Globe2, label: 'Open the controller link' },
+  { icon: MousePointerClick, label: 'Connect your device' },
+  { icon: Gamepad2, label: 'Steer the car' }
+];
+
+function Games() {
   return (
-    <div style={{
-      padding: '0 1.5rem 2rem',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '100%',
-      boxSizing: 'border-box',
-    }}>
-      
-      {/* Phone Connection Flowchart Banner - Directly under navbar */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        width: '100%',
-        gap: '1.5rem',
-        background: 'var(--glass-bg)',
-        borderBottom: '1px solid var(--glass-border)',
-        borderRadius: '0 0 24px 24px',
-        padding: '1.5rem 4rem',
-        marginTop: '-5rem', /* Negate App.css gap and navbar margin */
-        marginBottom: '2.5rem',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
-        color: 'var(--text-main)',
-      }}>
-        <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--accent-1)', display: 'flex', flexDirection: 'column' }}>
-          <span>Phone Controller</span>
-          <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-muted)' }}>How to play</span>
+    <main className="games-route">
+      <section className="app-route-heading">
+        <div className="app-route-heading-inner">
+          <p className="app-route-kicker">INTERACTIVE EXPERIMENTS · 01</p>
+          <h1>RC Pathfinder<span>.</span></h1>
+          <p>A browser-based driving challenge. Find a route through the generated map, avoid collisions, and try the phone controller.</p>
         </div>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.1rem', fontWeight: '500' }}>
-          <div style={{ background: 'rgba(6, 182, 212, 0.1)', padding: '0.75rem', borderRadius: '50%' }}>
-            <Camera size={28} color="var(--accent-1)" />
-          </div>
-          Scan QR on Screen
-        </div>
-        
-        <ChevronRight size={24} color="var(--text-muted)" />
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.1rem', fontWeight: '500' }}>
-          <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '0.75rem', borderRadius: '50%' }}>
-            <Globe size={28} color="#3b82f6" />
-          </div>
-          Open Browser Link
-        </div>
-        
-        <ChevronRight size={24} color="var(--text-muted)" />
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.1rem', fontWeight: '500' }}>
-          <div style={{ background: 'rgba(245, 158, 11, 0.1)', padding: '0.75rem', borderRadius: '50%' }}>
-            <MousePointerClick size={28} color="#f59e0b" />
-          </div>
-          Click Connect
-        </div>
-        
-        <ChevronRight size={24} color="var(--text-muted)" />
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.1rem', fontWeight: '600', color: 'var(--accent-2)' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '0.75rem', borderRadius: '50%' }}>
-            <Gamepad2 size={28} color="currentColor" />
-          </div>
-          Steer Car!
-        </div>
-      </div>
+      </section>
 
-      <h2 style={{ marginBottom: '0.5rem' }}>Interactive Experiments</h2>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center' }}>
-        Try out my custom interactive experiences built with React and HTML5 Canvas.
-      </p>
+      <section className="games-content">
+        <div className="controller-guide">
+          <div className="controller-guide-heading">
+            <span className="controller-guide-icon"><Gamepad2 size={20} /></span>
+            <div><h2>Bring your phone into the game</h2><p>Pair a second device as a remote steering controller.</p></div>
+          </div>
+          <div className="controller-steps">
+            {controllerSteps.map(({ icon: Icon, label }, index) => (
+              <div className="controller-step" key={label}>
+                <span className="controller-step-number">0{index + 1}</span>
+                <span className="controller-step-icon"><Icon size={17} /></span>
+                <span>{label}</span>
+                {index < controllerSteps.length - 1 && <ChevronRight className="controller-step-arrow" size={16} />}
+              </div>
+            ))}
+          </div>
+          <p className="controller-note">The phone controller requires the game server and both devices to be reachable on the same network.</p>
+        </div>
 
-
-
-      {/* Full-width game container with a tall fixed height */}
-      <div style={{
-        width: '100%',
-        height: '82vh',
-        minHeight: 520,
-        borderRadius: 12,
-        overflow: 'hidden',
-        boxShadow: '0 0 0 1px rgba(6,182,212,0.18), 0 20px 60px rgba(0,0,0,0.45)',
-      }}>
-        <RCPathfinderGame />
-      </div>
-    </div>
+        <div className="game-shell">
+          <div className="game-shell-heading">
+            <div><span className="game-live-dot" /><span>CANVAS SIMULATION</span></div>
+            <span>Use keyboard controls or connect a phone</span>
+          </div>
+          <div className="game-canvas-frame">
+            <RCPathfinderGame />
+          </div>
+        </div>
+      </section>
+    </main>
   );
-};
+}
 
 export default Games;

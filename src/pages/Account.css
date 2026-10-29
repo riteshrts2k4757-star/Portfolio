@@ -1,0 +1,171 @@
+.account-page {
+  color: var(--text-main);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.account-page-header::before {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent-2);
+  content: 'YOUR SPACE · PROFILE & ACTIVITY';
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.account-page-header p { max-width: 640px; }
+.account-page-header h1 {
+  background: none;
+  -webkit-text-fill-color: var(--text-main);
+}
+
+.account-partition { display: none; }
+
+.account-card,
+.account-stats-section {
+  background: var(--surface-color);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 14px 36px var(--shadow-color);
+}
+
+.account-card-header,
+.account-stats-title {
+  border-color: var(--glass-border);
+}
+
+.account-card-header h2,
+.account-stats-title { font-size: 1.3rem; }
+
+.account-info-item { border-color: var(--glass-border); }
+.account-info-item:hover { background: rgba(var(--accent-rgb), 0.06); }
+.account-info-label,.account-form-group label,.account-avatar-hint,
+.account-member-since p,.account-stat-label { font-size: 0.9rem; }
+.account-info-value { font-size: 1.1rem; overflow-wrap: anywhere; }
+.account-form-hint { color: var(--text-muted); }
+
+.account-form-group input {
+  min-height: 48px;
+  background: var(--surface-raised);
+  border-color: var(--glass-border);
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.account-form-group input:focus {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.14);
+}
+
+.account-member-since,.account-stat-card {
+  background: var(--surface-raised);
+  border-color: var(--glass-border);
+}
+
+.account-stat-highlight {
+  background: rgba(var(--accent-rgb), 0.08);
+  border-color: rgba(var(--accent-rgb), 0.24);
+}
+
+.account-stat-icon {
+  color: var(--accent-2);
+  background: var(--surface-color);
+  box-shadow: none;
+}
+
+.account-stat-card:hover { transform: translateY(-2px); box-shadow: none; }
+
+.account-save-btn,.account-camera-btn {
+  background: var(--accent-button);
+  box-shadow: none;
+}
+
+.account-save-btn:hover,.account-camera-btn:hover {
+  background: var(--accent-button);
+  box-shadow: none;
+}
+
+.account-edit-btn,.account-logout-btn,.account-page .btn {
+  min-height: 44px;
+  font-size: 0.95rem;
+}
+
+.account-edit-btn:hover {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+
+.account-logout-btn {
+  border-color: rgba(220, 38, 38, 0.45);
+  background: transparent;
+  color: #b42318;
+}
+
+.account-logout-btn:hover {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: #b42318;
+}
+
+:root[data-theme='dark'] .account-logout-btn { color: #ff8a80; }
+:root[data-theme='dark'] .account-logout-btn:hover { border-color: #ff8a80; }
+
+.account-avatar-ring {
+  width: 190px;
+  height: 190px;
+  padding: 4px;
+  box-shadow: 0 8px 24px var(--shadow-color);
+  animation: none;
+}
+
+.account-avatar-placeholder {
+  background: var(--surface-raised);
+  border-color: var(--surface-color);
+  color: var(--accent-2);
+}
+
+.account-avatar-img { border-color: var(--surface-color); }
+
+.account-camera-btn {
+  border: 2px solid var(--surface-color);
+  color: #fff;
+}
+
+.account-modal,.account-modal-editor {
+  color: var(--text-main);
+  background: var(--surface-color);
+  border-color: var(--glass-border);
+}
+
+.account-modal-editor { background: var(--surface-raised); }
+
+.account-page .btn-primary {
+  color: #fff;
+  background: var(--accent-button);
+}
+
+.account-page .btn-outline { background: var(--surface-color); }
+
+.account-page [style*="var(--tour-surface-alt)"] {
+  background: var(--surface-raised) !important;
+}
+
+@media (max-width: 768px) {
+  .account-page { width: calc(100% - 32px); padding: 1.5rem 0 3rem; }
+  .account-page-header { margin-bottom: 1rem; padding: 1.75rem 1.25rem; }
+  .account-layout { display: flex; flex-direction: column; min-height: 0; }
+  .account-left-column,.account-right-column { width: 100%; }
+  .account-stats-section { padding: 1.25rem; }
+  .account-stats-grid { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 0.75rem; }
+}
+
+@media (max-width: 480px) {
+  .account-card { padding: 1.15rem; }
+  .account-avatar-ring { width: 160px; height: 160px; }
+  .account-stats-grid { grid-template-columns: 1fr 1fr; }
+  .account-stat-card { padding: 1rem 0.6rem; }
+  .account-stat-value { font-size: 1.55rem; }
+  .account-modal { padding: 1.5rem 1rem; }
+  .account-modal-editor { padding: 0.5rem; overflow: hidden; }
+}

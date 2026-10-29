@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Search, Send, Bot, ArrowLeft, Check, CheckCheck, Trash2 } from 'lucide-react';
 import { API_BASE_URL, WS_BASE_URL } from '../apiConfig';
@@ -234,14 +235,34 @@ const Chat = () => {
 
   if (!user) {
     return (
-      <div className="page-container glass-box" style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h2>Please login to access the chat</h2>
+      <div className="chat-route-page">
+        <div className="app-route-heading">
+          <div className="app-route-heading-inner">
+            <p className="app-route-kicker">REAL-TIME MESSAGING</p>
+            <h1>Conversations, <span>connected.</span></h1>
+            <p>A shared space for direct conversations and AI-assisted help.</p>
+          </div>
+        </div>
+        <div className="chat-login-card">
+          <Bot size={24} />
+          <h2>Sign in to open your chat</h2>
+          <p>Your conversations are available after you sign in.</p>
+          <Link className="button-primary" to="/login">Sign in</Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="chat-page-container">
+    <div className="chat-route-page">
+      <div className="app-route-heading chat-route-heading">
+        <div className="app-route-heading-inner">
+          <p className="app-route-kicker">REAL-TIME MESSAGING</p>
+          <h1>Conversations, <span>connected.</span></h1>
+          <p>Talk directly with members or ask the assistant a question.</p>
+        </div>
+      </div>
+      <div className="chat-page-container">
       
       {/* 1. AI CHAT PANEL */}
       <div className={`chat-panel ai-chat-panel glass-box ${activeMobilePanel === 'ai' ? 'active-mobile-panel' : ''}`}>
@@ -492,6 +513,7 @@ const Chat = () => {
         </div>
       </div>
 
+      </div>
     </div>
   );
 };

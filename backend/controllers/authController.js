@@ -42,9 +42,27 @@ export const register = async (req, res) => {
     });
 
     // In production, use the deployed URL
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://portfolio-mocha-sigma-c3spyxg0mi.vercel.app'
-      : 'http://localhost:5173';
+    const requestOrigin = req.get('origin');
+    let localFrontendUrl = 'http://localhost:5173';
+    if (requestOrigin) {
+      try {
+        const origin = new URL(requestOrigin);
+        if (
+          origin.protocol === 'http:' &&
+          origin.port === '5173' &&
+          origin.hostname === req.hostname
+        ) {
+          localFrontendUrl = origin.origin;
+        }
+      } catch {
+        // Ignore invalid Origin headers and use the local development fallback.
+      }
+    }
+    const baseUrl = process.env.FRONTEND_URL || (
+      process.env.NODE_ENV === 'production'
+        ? 'https://portfolio-mocha-sigma-c3spyxg0mi.vercel.app'
+        : localFrontendUrl
+    );
       
     const verificationLink = `${baseUrl}/verify?token=${verificationToken}`;
 
