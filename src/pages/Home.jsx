@@ -98,17 +98,19 @@ const projects = [
     previewTabs: ['Overview', 'Activity', 'Transfer']
   },
   {
-    id: 'water',
+    id: 'ecogrid',
     number: '05',
-    name: 'Smart Water Tank',
-    subtitle: 'Connected monitoring & pump control',
-    status: 'IoT prototype',
-    description: 'An ESP32 water-level monitor that uses an ultrasonic sensor and relay logic to automate a tank motor.',
-    details: 'The project is described in the existing portfolio as a real-time water-level system with automatic motor control based on the measured level.',
-    tags: ['ESP32', 'Ultrasonic sensor', 'Relay', 'Web dashboard'],
-    source: 'https://github.com/Shreekant-Bharti/BeyondInfinity',
+    name: 'EcoGrid — Sustainable Energy Utilization',
+    subtitle: 'Renewable energy · intelligent operations',
+    category: 'Full-Stack ML',
+    description: 'Real-time solar and wind monitoring with smart panel-cleaning recommendations, turbine fault detection, and priority-aware energy distribution.',
+    problem: 'Solar and wind plants lose energy and face unexpected downtime when panel dust builds up or mechanical faults go unnoticed. They also need to distribute available power efficiently across critical, industrial, local, and national loads.',
+    approach: 'Built an XGBoost telemetry prediction model to schedule panel cleaning and a three-class classifier to detect turbine faults, wrapped in a React and Flask application. The energy-distribution workflow prioritizes critical, industrial, local, and national loads.',
+    results: 'Significantly minimizes unplanned outages and optimizes generation efficiency via live sensor telemetry.',
+    tags: ['React', 'Vite', 'Python', 'Flask', 'XGBoost'],
+    source: 'https://github.com/riteshrts2k4757-star/Sustainable_Utilization',
     sourceLabel: 'Source code',
-    previewTabs: ['Level', 'History', 'Controls']
+    previewTabs: ['Generation', 'Distribution', 'Maintenance']
   }
 ];
 
@@ -181,22 +183,22 @@ function ProjectPreview({ project }) {
   const tour = project.id === 'bookyourtour';
   const radar = project.id === 'radar';
   const banking = project.id === 'banking';
-  const water = project.id === 'water';
+  const ecogrid = project.id === 'ecogrid';
 
   return (
     <div className={`project-device preview-${project.id}`}>
       <div className="device-topbar">
         <span className="device-lights"><i /><i /><i /></span>
-        <span className="device-url">{farmtrace ? 'farmtrace / dashboard' : tour ? 'bookyourtour / discover' : radar ? 'radar / scan' : banking ? 'account / overview' : water ? 'water / monitor' : 'rc-control / cockpit'}</span>
+        <span className="device-url">{farmtrace ? 'farmtrace / dashboard' : tour ? 'bookyourtour / discover' : radar ? 'radar / scan' : banking ? 'account / overview' : ecogrid ? 'ecogrid / energy-dashboard' : 'rc-control / cockpit'}</span>
         <span className="device-menu">•••</span>
       </div>
       <div className="preview-inner">
         <div className="preview-heading">
           <div>
-            <span className="preview-eyebrow">{farmtrace ? 'COLD-CHAIN SYSTEM' : tour ? 'TRAVEL PLANNER' : radar ? 'SENSOR VISUALIZATION' : banking ? 'DEMO ACCOUNT' : water ? 'WATER SYSTEM' : 'CONTROL LINK'}</span>
-            <h3>{farmtrace ? 'Fleet overview' : tour ? 'Find your next stay' : radar ? 'Radar scan preview' : banking ? 'Account overview' : water ? 'Tank status' : 'Pilot console'}</h3>
+            <span className="preview-eyebrow">{farmtrace ? 'COLD-CHAIN SYSTEM' : tour ? 'TRAVEL PLANNER' : radar ? 'SENSOR VISUALIZATION' : banking ? 'DEMO ACCOUNT' : ecogrid ? 'RENEWABLE ENERGY SYSTEM' : 'CONTROL LINK'}</span>
+            <h3>{farmtrace ? 'Fleet overview' : tour ? 'Find your next stay' : radar ? 'Radar scan preview' : banking ? 'Account overview' : ecogrid ? 'Sustainable energy overview' : 'Pilot console'}</h3>
           </div>
-          <span className="preview-status"><i /> {farmtrace ? 'DEMO' : tour ? 'EXPLORE' : radar ? 'PREVIEW' : banking ? 'SAMPLE' : water ? 'LOCAL' : 'DEMO UI'}</span>
+          <span className="preview-status"><i /> {farmtrace ? 'DEMO' : tour ? 'EXPLORE' : radar ? 'PREVIEW' : banking || ecogrid ? 'SAMPLE' : 'DEMO UI'}</span>
         </div>
         <div className="preview-tabs" role="tablist" aria-label={`${project.name} preview`}>
           {project.previewTabs.map(tab => (
@@ -248,10 +250,35 @@ function ProjectPreview({ project }) {
             <div className="bank-chart"><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
             <div className="bank-row"><span>Recent activity</span><b>{activeTab === 'Transfer' ? 'Transfer preview' : 'Account activity'}</b></div>
           </div>
-        ) : water ? (
-          <div className="water-preview">
-            <div className="water-tank"><span><i /></span><b>LEVEL<br /><strong>DEMO</strong></b></div>
-            <div className="water-readout"><span>ULTRASONIC SENSOR</span><strong>{activeTab === 'Controls' ? 'Motor control' : activeTab === 'History' ? 'Recent samples' : 'Level monitor'}</strong><small>Illustrative interface</small></div>
+        ) : ecogrid ? (
+          <div className={`eco-preview eco-preview-${activeTab.toLowerCase()}`}>
+            <div className="eco-output">
+              <div><span>{activeTab === 'Generation' ? 'RENEWABLE OUTPUT' : activeTab === 'Distribution' ? 'PRIORITY LOADS' : 'PREDICTIVE MAINTENANCE'} · SAMPLE</span><strong>{activeTab === 'Generation' ? <>1.28 <small>MW</small></> : activeTab === 'Distribution' ? 'Balanced' : 'Model ready'}</strong></div>
+              {activeTab === 'Generation' ? (
+                <div className="eco-generation-bars" aria-hidden="true">
+                  {[34, 46, 40, 58, 52, 72, 64, 82, 70, 92, 78, 100].map((height, index) => <i key={index} style={{ '--bar-height': `${height}%` }} />)}
+                </div>
+              ) : (
+                <span className="eco-output-icon" aria-hidden="true">{activeTab === 'Distribution' ? <Zap size={22} /> : <Activity size={22} />}</span>
+              )}
+            </div>
+            {activeTab === 'Generation' ? (
+              <div className="eco-metrics">
+                <div><span>Solar</span><strong>0.82 MW</strong></div>
+                <div><span>Wind</span><strong>0.46 MW</strong></div>
+              </div>
+            ) : activeTab === 'Distribution' ? (
+              <div className="eco-loads">
+                {[['Critical', 35, 92], ['Industrial', 30, 76], ['Local', 20, 58], ['National', 15, 42]].map(([label, share, width]) => (
+                  <div className="eco-load-row" key={label}><span>{label}</span><i><b style={{ width: `${width}%` }} /></i><strong>{share}%</strong></div>
+                ))}
+              </div>
+            ) : (
+              <div className="eco-maintenance">
+                <div><span>Panel cleaning</span><strong>Optimal window predicted</strong></div>
+                <div><span>Turbine diagnostics</span><strong>3-class fault check</strong></div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="plane-preview">
@@ -259,7 +286,7 @@ function ProjectPreview({ project }) {
             <div className="plane-controls"><span>CONTROL LINK</span><strong>{activeTab === 'Signal' ? 'Wireless signal' : activeTab === 'Status' ? 'System status' : 'Manual control'}</strong><div><i /><i /><i /></div></div>
           </div>
         )}
-        {farmtrace && <div className="preview-disclaimer">Illustrative sample · no live telemetry</div>}
+        {(farmtrace || ecogrid) && <div className="preview-disclaimer">Illustrative sample · no live telemetry</div>}
       </div>
       <div className="device-stand"><span /></div>
     </div>
@@ -270,7 +297,7 @@ function ProjectShowcase({ project, index }) {
   const [expanded, setExpanded] = useState(false);
   const description = (
     <div className="project-copy">
-      <div className="project-index"><span>{project.number}</span><span>{project.status}</span></div>
+      <div className="project-index"><span>{project.number}</span><span>{project.category || project.status}</span></div>
       <p className="project-kicker">{project.subtitle}</p>
       <h3>{project.name}</h3>
       <p className="project-description">{project.description}</p>
@@ -292,7 +319,13 @@ function ProjectShowcase({ project, index }) {
           {expanded ? 'Hide details' : 'Project details'}
         </button>
       </div>
-      {expanded && <p className="project-details">{project.details}</p>}
+      {expanded && (project.id === 'ecogrid' ? (
+        <div className="project-details project-details-structured">
+          <p><strong>Challenge</strong>{project.problem}</p>
+          <p><strong>Approach</strong>{project.approach}</p>
+          <p><strong>Outcome</strong>{project.results}</p>
+        </div>
+      ) : <p className="project-details">{project.details}</p>)}
     </div>
   );
 

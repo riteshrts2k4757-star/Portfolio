@@ -249,6 +249,8 @@
     width: min(440px, calc(100vw - 24px));
     max-height: calc(100dvh - 78px);
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row;
     align-items: stretch;
     gap: 17px;
     overflow-y: auto;
@@ -264,16 +266,19 @@
   }
 
   .site-nav-content.nav-open { opacity: 1; visibility: visible; transform: translateY(0); }
-  .site-nav-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 8px; }
+  .site-nav-links,
+  .site-nav-mobile-apps,
+  .site-nav-tools { grid-column: 1; grid-row: auto; }
+  .site-nav-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 8px; min-width: 0; width: 100%; }
   .site-nav-link { padding: 11px 9px; border-radius: 8px; font-size: 0.9rem; }
   .site-nav-link:hover,.site-nav-link.active { background: rgba(var(--accent-rgb), 0.08); }
   .nav-active-indicator { display: none; }
-  .site-nav-mobile-apps { display: grid; gap: 9px; padding-top: 15px; border-top: 1px solid var(--glass-border); }
+  .site-nav-mobile-apps { display: grid; gap: 9px; min-width: 0; width: 100%; padding-top: 15px; border-top: 1px solid var(--glass-border); }
   .mobile-apps-label { color: var(--text-muted); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
   .mobile-app-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
   .mobile-app-links a { min-height: 42px; display: flex; align-items: center; padding: 8px 10px; border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-muted); font-size: 0.82rem; text-decoration: none; transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease; }
   .mobile-app-links a:hover { border-color: var(--accent-2); color: var(--accent-2); background: rgba(var(--accent-rgb), 0.06); }
-  .site-nav-tools { justify-content: flex-start; flex-wrap: wrap; gap: 10px; padding-top: 15px; border-top: 1px solid var(--glass-border); }
+  .site-nav-tools { justify-content: flex-start; flex-wrap: wrap; gap: 10px; min-width: 0; width: 100%; padding-top: 15px; border-top: 1px solid var(--glass-border); }
   .nav-more { display: none; }
   .nav-account .account-link > span:not(.account-avatar) { display: inline; }
   .nav-signin { margin-left: 2px; }

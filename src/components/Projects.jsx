@@ -15,10 +15,10 @@ const Projects = () => {
       github: "github.com/riteshrts2k4757-star/aSimpleBankingWebsite.git"
     },
     {
-      title: "Smart Water Tank Management System",
-      tags: ["ESP32", "Ultrasonic Sensor", "Relay", "Web Dashboard"],
-      description: "Designed and implemented an IoT based system to monitor water level in the tank in real-time. Automated motor ON/OFF using relay based on water level.",
-      github: "github.com/Shreekant-Bharti/BeyondInfinity.git"
+      title: "EcoGrid — Sustainable Energy Utilization",
+      tags: ["React", "Vite", "Python", "Flask", "XGBoost"],
+      description: "Real-time solar and wind monitoring with smart panel-cleaning recommendations, turbine fault detection, and priority-aware energy distribution across critical, industrial, local, and national loads.",
+      github: "github.com/riteshrts2k4757-star/Sustainable_Utilization"
     }
   ];
 

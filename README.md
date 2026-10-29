@@ -9,8 +9,10 @@ A full-stack personal portfolio web application built with **React**, **Express*
 ### 🏠 Home
 - Responsive developer portfolio highlighting full-stack, IoT, and applied ML work
 - Interactive project previews, engineering architecture, skills filters, and education
+- **EcoGrid — Sustainable Energy Utilization**: React/Vite and Flask/XGBoost project showcase for solar and wind telemetry, predictive panel cleaning, three-class turbine fault detection, and energy distribution prioritized across critical, industrial, local, and national loads
+- EcoGrid's interactive preview covers generation, priority distribution, and maintenance; displayed figures are illustrative sample data, not live telemetry
 - Persistent light/dark themes with green, orange, and purple accent choices
-- Reduced-motion support and keyboard-accessible navigation
+- Responsive desktop and mobile navigation, reduced-motion support, and keyboard-accessible controls
 
 ### 💬 Real-Time Chat & AI Assistant
 - WebSocket-powered live messaging between authenticated users
@@ -84,6 +86,13 @@ portfolio/
 ├── db.js                  # Supabase connection setup
 └── package.json
 ```
+
+### Selected project
+
+**EcoGrid — Sustainable Energy Utilization**
+
+The portfolio showcase presents a renewable-energy monitoring and operations project: telemetry-based panel-cleaning recommendations, turbine fault classification, and priority-aware distribution across critical, industrial, local, and national loads. Its project details describe the XGBoost prediction workflow and React/Flask stack.
+Source: [Sustainable_Utilization on GitHub](https://github.com/riteshrts2k4757-star/Sustainable_Utilization).
 
 ---
 
